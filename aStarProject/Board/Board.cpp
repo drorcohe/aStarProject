@@ -17,4 +17,4 @@ std::vector<int> Board::getSolution(){
 	return std::vector<int>();	
 }
 
-std::vector<int> aStarSearch();
+//std::vector<int> aStarSearch(std::vector<Circle> board, int start,int end){}
