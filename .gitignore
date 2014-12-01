@@ -1,0 +1,7 @@
+aStarProject/Board/Debug/*
+aStarProject/Board/Release/*
+aStarProject/Release/*
+aStarProject/Debug/*
+*.sdf
+*.opensdf
+*.suo
