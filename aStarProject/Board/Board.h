@@ -20,7 +20,7 @@ public:
 class Board{
 public:
 	void init(std::string boardPath,std::string imagePath);
-	std::vector<Circle> getBoard();	
+	std::vector<Circle> getBoard(){ return board;};	
 	int getStartCircle(){ return startCircle; };
 	int getEndCircle(){ return endCircle; };
 	std::vector<int> getSolution();
