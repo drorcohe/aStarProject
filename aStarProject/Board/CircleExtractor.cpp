@@ -6,6 +6,8 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "FileReader.h"
+
 using namespace cv;
 
 /** @function main */
@@ -58,10 +60,22 @@ int main3(int argc, char** argv)
 }
 
 
-int main(int argc, char** argv){
+int mainWrite(int argc, char** argv){
 	std:string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
 	std::vector<Circle*> circles = getCirclesFromImage(imPath);
+	//printCircles(circles,imPath);
+
+	writeCirclesToFile(circles,std::string("circlesFile.txt"));
+	return 1;
+
+}
+
+int main(int argc, char** argv){
+	std:string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
+	std::vector<Circle*> circles = readCirclesFromFile(std::string("circlesFile.txt"));
 	printCircles(circles,imPath);
+
+	return 1;
 }
 
 
@@ -134,3 +148,5 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 
 	waitKey(0);
 }
+
+

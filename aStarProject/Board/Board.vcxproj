@@ -68,10 +68,12 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="CircleExtractor.h" />
+    <ClInclude Include="FileReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="CircleExtractor.cpp" />
+    <ClCompile Include="FileReader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
