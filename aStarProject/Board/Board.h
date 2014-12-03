@@ -1,5 +1,5 @@
 #ifndef _BOARD_H
-#define BOARD_H
+#define _BOARD_H
 
 #include <iostream>
 #include <string>
@@ -10,11 +10,13 @@
 class Circle{
 
 public:
+	Circle(int x, int y, int index, int radius, float R, float G, float B);
+
 	int x,y;
 	int index;
 	int radius;
 	std::vector<int> neighbours;
-	float R,G,B; //from 0 to 1
+	int R,G,B; //from 0 to 1
 
 	inline bool operator==(const Circle& other);
 	

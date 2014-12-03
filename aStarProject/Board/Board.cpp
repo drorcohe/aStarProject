@@ -6,10 +6,14 @@
 #include <queue>
 #include <functional>
 #include <assert.h>
-int main(){
+int main2(){
 	return 1;
 }
 
+
+Circle::Circle(int x_p, int y_p, int index_p, int radius_p, float R_p, float G_p, float B_p) : x(x_p), y(y_p),index(index_p),radius(radius_p),R(R_p),G(G_p),B(B_p){
+
+}
 
 void Board::init(std::string boardPath,std::string imagePath){
 	//init board and map and maxRadius
@@ -77,8 +81,8 @@ std::vector<int> Board::aStarSearch(std::vector<Circle*> board, int start,int en
 	
 	while(openSet.size() > 0){
 		
-	
-		int minCircleIndex = std::min_element(openSet.begin,openSet.end);
+		
+		int minCircleIndex = *openSet.rbegin();
 		Circle* currentCircle = indToCircle.at(minCircleIndex);
 		if(currentCircle == indToCircle.at(endCircle)){
 				delete[] g_score;
