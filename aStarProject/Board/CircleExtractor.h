@@ -4,12 +4,11 @@
 #include "Board.h"
 
 
-static std::vector<Circle*> getCirclesFromImage(std::string path);
+std::vector<Circle*> getCirclesFromImage(std::string path);
 
-static void printCircles(std::vector<Circle*> circles,std::string imPath);
+void printCircles(std::vector<Circle*> circles,std::string imPath);
 
-
-
+void extractNeigbours(std::vector<Circle*> &circleVect);
 
 
 

@@ -60,23 +60,7 @@ int main3(int argc, char** argv)
 }
 
 
-int mainWrite(int argc, char** argv){
-	std:string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
-	std::vector<Circle*> circles = getCirclesFromImage(imPath);
-	//printCircles(circles,imPath);
 
-	writeCirclesToFile(circles,std::string("circlesFile.txt"));
-	return 1;
-
-}
-
-int main(int argc, char** argv){
-	std:string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
-	std::vector<Circle*> circles = readCirclesFromFile(std::string("circlesFile.txt"));
-	printCircles(circles,imPath);
-
-	return 1;
-}
 
 
 std::vector<Circle*> getCirclesFromImage(std::string path){
@@ -107,17 +91,36 @@ std::vector<Circle*> getCirclesFromImage(std::string path){
   //HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows/8, 200, 100, 0, 0 );
 
   /// Draw the circles detected
+	int circleCounter = 0;
   for( size_t i = 0; i < circles.size(); i++ )
   {
 	  
       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
       int radius = cvRound(circles[i][2]);
 	 // Vec3i value = image.at<cv::Vec3b>(y,x)[0];
-	  Circle* next = new Circle(center.y,center.x,i,radius,src.at<cv::Vec3b>(center.y,center.x)[0],src.at<cv::Vec3b>(center.y,center.x)[1],src.at<cv::Vec3b>(center.y,center.x)[2]);
+	  Circle* next = new Circle(center.y,center.x,circleCounter,radius,src.at<cv::Vec3b>(center.y,center.x)[0],src.at<cv::Vec3b>(center.y,center.x)[1],src.at<cv::Vec3b>(center.y,center.x)[2]);
       
-	  outCircles.push_back(next);
+	  //checks if the current circle collides with previos ones
+		bool isCollided = false;
+		for( size_t j = 0; j < circleCounter; j++ )
+		{
+			Circle* prevCircle = outCircles[j];
+			if(Circle::dist(*prevCircle,*next) < -0.5){
+				isCollided = true;
+				break;
+			}
+		}
+
+		if(isCollided){
+			delete next;
+			continue;
+		}
+
+		circleCounter++;
+		outCircles.push_back(next);
    }
 
+	extractNeigbours(outCircles);
 	return outCircles;
 
 
@@ -144,9 +147,23 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 	}
 	
 
+	
 	imshow( "Hough Circle Transform Demo", blankMat );
 
 	waitKey(0);
 }
 
+
+
+
+void extractNeigbours(std::vector<Circle*> &circleVect){
+	for(int i=0 ; i<circleVect.size() ; i++){
+		for(int j=i+1 ; j<circleVect.size() ; j++){
+			if( Circle::dist(*circleVect[i],*circleVect[j]) < MAX_DIST_FROM_NEIGHBOUR){
+				circleVect[i]->neighbours.push_back(circleVect[j]->index);
+				circleVect[j]->neighbours.push_back(circleVect[i]->index);
+			}
+		}
+	}
+}
 

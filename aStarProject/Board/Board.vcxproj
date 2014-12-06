@@ -74,6 +74,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="CircleExtractor.cpp" />
     <ClCompile Include="FileReader.cpp" />
+    <ClCompile Include="unitest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

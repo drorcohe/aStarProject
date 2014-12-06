@@ -5,8 +5,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#define NEIGBOURS_HEADLINE "Neighbours"
+#define BOARD_START_END_HEADLINE "BoardStartEnd"
 
- void writeCirclesToFile(std::vector<Circle*> circles, std::string fileName);
- std::vector<Circle*> readCirclesFromFile(std::string fileName);
+ void writeBoardToFile(std::vector<Circle*> circles, std::string fileName, int startCircle=-1, int endCircle = -1);
+ std::vector<Circle*> readBoardFromFile(std::string fileName, int& startCircle, int& endCircle);
 
 #endif
