@@ -160,6 +160,29 @@ void extractNeigbours(std::vector<Circle*> &circleVect){
 	for(int i=0 ; i<circleVect.size() ; i++){
 		for(int j=i+1 ; j<circleVect.size() ; j++){
 			if( Circle::dist(*circleVect[i],*circleVect[j]) < MAX_DIST_FROM_NEIGHBOUR){
+
+				bool goesThroughAnotherCircle = false;
+				//if the line goes through another circle - they are noy neighbours!
+				for(int k=0 ; k<circleVect.size() ; k++){
+					if(k==i || k==j){
+						continue;
+					}
+					
+					float middleX = (circleVect[i]->x + circleVect[j]->x) / 2;
+					float middleY = (circleVect[i]->y + circleVect[j]->y) / 2;
+
+					Circle* tempCircle = circleVect[k];
+					float distFromCircleCenter = sqrt((middleX-tempCircle->x)*(middleX-tempCircle->x) + (middleY-tempCircle->y)*(middleY-tempCircle->y));
+					if(distFromCircleCenter - tempCircle->radius < 0){
+						goesThroughAnotherCircle = true;
+						break;
+					}
+				}
+				if(goesThroughAnotherCircle){
+					continue;
+				}
+
+				//else - update that the circles are neighbours
 				circleVect[i]->neighbours.push_back(circleVect[j]->index);
 				circleVect[j]->neighbours.push_back(circleVect[i]->index);
 			}

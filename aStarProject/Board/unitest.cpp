@@ -15,7 +15,7 @@ int mainWriteBoard(int argc, char** argv){
 	std::vector<Circle*> circles = getCirclesFromImage(imPath);
 	//printCircles(circles,imPath);
 
-	writeBoardToFile(circles,std::string("circlesFile.txt"),5,200);
+	writeBoardToFile(circles,std::string("circlesFile.txt"),4,199);
 	printNeigbours(circles,imPath);
 
 	return 1;
