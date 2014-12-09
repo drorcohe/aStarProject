@@ -9,14 +9,14 @@
 void printNeigbours(std::vector<Circle*> circles, std::string imPath);
 void printBoard(Board b, std::vector<int> solutionPath = std::vector<int>());
 
-int main(int argc, char** argv){
+int mainWrite(int argc, char** argv){
 
 
-	std::vector<Circle*> circles = getCirclesFromImage(DEER_PARAMETER_SET);
-	//printCircles(circles,imPath);
+	std::vector<Circle*> circles = getCirclesFromImage(MAP_PARAMETER_SET);
+	printCircles(circles,MAP_PARAMETER_SET.imagePath);
 
-	writeBoardToFile(circles,std::string("..\\resources\\deerBoard.txt"),4,199);
-	printNeigbours(circles,DEER_PARAMETER_SET.imagePath);
+	writeBoardToFile(circles,std::string("..\\resources\\mapBoard.txt"),4,199);
+	printNeigbours(circles,MAP_PARAMETER_SET.imagePath);
 
 	return 1;
 
@@ -31,10 +31,10 @@ int mainReadCircles(int argc, char** argv){
 	return 1;
 }
 
-int mainPrintSolution(){
-	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
+int main(){
+	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("circlesFile.txt"),imPath);
+	b.init(std::string("..\\resources\\merlinBoard.txt"),imPath);
 	printBoard(b);
 
 	std::vector<int> solutionPath = b.aStarSearch();

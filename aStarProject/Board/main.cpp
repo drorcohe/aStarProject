@@ -9,7 +9,7 @@
 
 int main(){
 	Board b;
-	b.init(std::string("..\\resources\\circlesFile.txt"),std::string("..\\resources\\heart.jpg") );
+	b.init(std::string("..\\resources\\deerBoard.txt"),std::string("..\\resources\\deer.jpg") );
 
 
 	std::vector<int> solutionPath = b.aStarSearch();

@@ -14,7 +14,7 @@ typedef struct ParametersSet{
 }ParametersSet;
 
 
-extern ParametersSet HEART_PARAMETER_SET,DEER_PARAMETER_SET;
+extern ParametersSet HEART_PARAMETER_SET,DEER_PARAMETER_SET,SHOUT_PARAMETER_SET,MERLIN_PARAMETER_SET,MAP_PARAMETER_SET;
 
 
 std::vector<Circle*> getCirclesFromImage(ParametersSet set);

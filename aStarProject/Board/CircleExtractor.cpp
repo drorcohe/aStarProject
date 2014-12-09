@@ -10,8 +10,13 @@
 
 using namespace cv;
 bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1);
+bool doesCircleStandsInTheWay(Circle* first, Circle* second, Circle* third);
 extern ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17,15};
-extern ParametersSet DEER_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17,10};
+extern ParametersSet DEER_PARAMETER_SET = {std::string("DEER"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17,10};
+extern ParametersSet SHOUT_PARAMETER_SET = {std::string("SHOUT"),std::string("..\\resources\\shout.jpg"),1, 6 ,2,6,1,25,10};
+extern ParametersSet MERLIN_PARAMETER_SET = {std::string("MERLIN"),std::string("..\\resources\\merlin.jpg"),1, 6 ,2,6,1,25,10};
+extern ParametersSet MAP_PARAMETER_SET = {std::string("MAP"),std::string("..\\resources\\map2.jpg"),1, 6 ,2,8,3,0.1,5};
+
 
 //first image: C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg
 //image parameters: HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 6 ,2,13,2,17); 
@@ -144,8 +149,8 @@ std::vector<Circle*> getCirclesFromImage(std::string path,
 
 
 int main2(){
-	std::vector<Circle*> circles = getCirclesFromImage(DEER_PARAMETER_SET);
-	printCircles(circles,DEER_PARAMETER_SET.imagePath);
+	std::vector<Circle*> circles = getCirclesFromImage(MERLIN_PARAMETER_SET);
+	printCircles(circles,MERLIN_PARAMETER_SET.imagePath);
 	
 	return 0;
 }
@@ -166,7 +171,7 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 		cv::Point center(nextCircle->y,nextCircle->x);
 		int R = circles[i]->R; int G = circles[i]->G; int B = circles[i]->B;
 
-		circle( blankMat, center, circles[i]->radius, Scalar(R,G,B) );
+		circle( blankMat, center, circles[i]->radius, Scalar(R,G,B),CV_FILLED );
 
 	}
 	
@@ -181,40 +186,86 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 
 
 void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbour){
+
+	//first iteration - each pair of circles is labled as a pair of neighbours according to their distance only
 	for(int i=0 ; i<circleVect.size() ; i++){
 		for(int j=i+1 ; j<circleVect.size() ; j++){
 			if( Circle::dist(*circleVect[i],*circleVect[j]) < maxDistFromNeighbour){
-
-				bool goesThroughAnotherCircle = false;
-				//if the line goes through another circle - they are noy neighbours!
-				for(int k=0 ; k<circleVect.size() ; k++){
-					if(k==i || k==j){
-						continue;
-					}
-					
-					float middleX = (circleVect[i]->x + circleVect[j]->x) / 2;
-					float middleY = (circleVect[i]->y + circleVect[j]->y) / 2;
-
-					Circle* tempCircle = circleVect[k];
-					float distFromCircleCenter = sqrt((middleX-tempCircle->x)*(middleX-tempCircle->x) + (middleY-tempCircle->y)*(middleY-tempCircle->y));
-					if(distFromCircleCenter - tempCircle->radius < 0){
-						goesThroughAnotherCircle = true;
-						break;
-					}
-				}
-				if(goesThroughAnotherCircle){
-					continue;
-				}
-
-				//else - update that the circles are neighbours
 				circleVect[i]->neighbours.push_back(circleVect[j]->index);
 				circleVect[j]->neighbours.push_back(circleVect[i]->index);
 			}
 		}
 	}
+
+	//second iteration - we remove neigbours if there is another circle which stands in the way
+		//first iteration - each pair of circles is labled as a pair of neighbours according to their distance only
+	for(int i=0 ; i<circleVect.size() ; i++){
+		Circle* originalCircle = circleVect[i];
+
+		for(int j=0 ; j < originalCircle->neighbours.size() ; j++){
+			Circle* neighbourCandidate1 = circleVect[originalCircle->neighbours[j]];
+
+			for(int k=0 ; k<circleVect.size() ; k++){
+
+			
+
+				bool goesThroughAnotherCircle = false;
+				//if the line goes through another circle - they are noy neighbours!
+				for(int k=0 ; k<originalCircle->neighbours.size() ; k++){
+					Circle* neighbourCandidate2 = circleVect[originalCircle->neighbours[k]];
+					if(k==j){
+						continue;
+					}
+
+					float distFrom1 = sqrt(pow((originalCircle->x-neighbourCandidate1->x),2)+pow((originalCircle->y-neighbourCandidate1->y),2)) - originalCircle->radius - neighbourCandidate1->radius;
+					float distFrom2 = sqrt(pow((originalCircle->x-neighbourCandidate2->x),2)+pow((originalCircle->y-neighbourCandidate2->y),2)) - originalCircle->radius - neighbourCandidate2->radius;
+					
+					//erases neighbourCandidate1 only if it's stands between the original circle and the second candidate,  
+					// and also only if its distance from the original circle is larger
+					if(i==99){
+						int a =33;
+					}
+					if(doesCircleStandsInTheWay(originalCircle,neighbourCandidate1,neighbourCandidate2) && distFrom1 > distFrom2){
+						originalCircle->neighbours.erase(originalCircle->neighbours.begin()+j);
+						j--;
+						goesThroughAnotherCircle = true;
+						break;
+					}
+				}
+				if(goesThroughAnotherCircle){
+					break;
+				}
+
+			}
+		}
+	}
 }
 
+//returns true if the third circle stands in the way of the first two circles
+bool doesCircleStandsInTheWay(Circle* first, Circle* second, Circle* third){
 
+
+	//float dist1From2 = sqrt(pow((first->x-second->x),2)+pow((first->y-second->y),2)) - first->radius - second->radius;
+					
+
+	float middleX = (first->x + second->x) / 2;
+	float middleY = (first->y + second->y) / 2;
+	float radiusMiddle = max(first->radius,second->radius);
+	
+	int counter = 0;
+	int MAX_COUNT = 9;
+	while(doesCirclesIntersect(middleX,middleY,radiusMiddle,first->x,first->y,first->radius) && counter < MAX_COUNT){
+		middleX = (second->x + middleX) / 2;
+		middleY = (second->y + middleY) / 2;
+		counter++;
+	}
+
+	if(counter >= MAX_COUNT){
+		return false;
+	}
+
+	return (doesCirclesIntersect(middleX,middleY,radiusMiddle,third->x,third->y,third->radius));
+}
 
 
 bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1){
