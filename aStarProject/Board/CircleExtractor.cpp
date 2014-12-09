@@ -10,6 +10,11 @@
 
 using namespace cv;
 
+
+//first image: C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg
+//image parameters: HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 6 ,2,13,2,17); 
+
+
 /** @function main */
 int main3(int argc, char** argv)
 {
@@ -63,7 +68,9 @@ int main3(int argc, char** argv)
 
 
 
-std::vector<Circle*> getCirclesFromImage(std::string path){
+std::vector<Circle*> getCirclesFromImage(std::string path, 
+			double dp, double minDist, double param1, double param2, int minRadius, int maxRadius){
+
 	Mat src, src_orig, src_gray, out;
 
   /// Read the image
@@ -75,8 +82,6 @@ std::vector<Circle*> getCirclesFromImage(std::string path){
   /// Convert it to gray
   cvtColor( src, src_gray, CV_BGR2GRAY );
 
-  cv::Mat thresh;
-  //cv::threshold(src_gray,src_gray,100,255,src_gray.type()); monro
 
   /// Reduce the noise so we avoid false circle detection
   GaussianBlur( src_gray, src_gray, Size(9, 9), 2, 2 );
@@ -84,12 +89,9 @@ std::vector<Circle*> getCirclesFromImage(std::string path){
   vector<Vec3f> circles;
   std::vector<Circle*> outCircles;
   //1, 2 ,2,100,1
-  //HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 2 ,2,25,1,30); // min and max radius
- // HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 2 ,2,11,2,11); monro
-    HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 6 ,2,13,2,17); 
-  /// Apply the Hough Transform to find the circles
-  //HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, src_gray.rows/8, 200, 100, 0, 0 );
 
+    HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius); 
+ 
   /// Draw the circles detected
 	int circleCounter = 0;
   for( size_t i = 0; i < circles.size(); i++ )
@@ -97,7 +99,6 @@ std::vector<Circle*> getCirclesFromImage(std::string path){
 	  
       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
       int radius = cvRound(circles[i][2]);
-	 // Vec3i value = image.at<cv::Vec3b>(y,x)[0];
 	  Circle* next = new Circle(center.y,center.x,circleCounter,radius,src.at<cv::Vec3b>(center.y,center.x)[0],src.at<cv::Vec3b>(center.y,center.x)[1],src.at<cv::Vec3b>(center.y,center.x)[2]);
       
 	  //checks if the current circle collides with previos ones
@@ -124,6 +125,14 @@ std::vector<Circle*> getCirclesFromImage(std::string path){
 	return outCircles;
 
 
+}
+
+
+int main(){
+	std::vector<Circle*> circles = getCirclesFromImage("C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg", 1, 6 ,2,13,2,17);
+	printCircles(circles,"C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg");
+	
+	return 0;
 }
 
 void printCircles(std::vector<Circle*> circles,std::string imPath){
