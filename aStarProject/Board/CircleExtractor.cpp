@@ -14,6 +14,27 @@ using namespace cv;
 //first image: C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg
 //image parameters: HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 6 ,2,13,2,17); 
 
+/*
+	CV_HOUGH_GRADIENT: Define the detection method. Currently this is the only one available in OpenCV
+	dp = 1: The inverse ratio of resolution
+	min_dist = src_gray.rows/8: Minimum distance between detected centers
+	param_1 = 200: Upper threshold for the internal Canny edge detector
+	param_2 = 100*: Threshold for center detection.
+	min_radius = 0: Minimum radio to be detected. If unknown, put zero as default.
+	max_radius = 0: Maximum radius to be detected. If unknown, put zero as default
+*/
+typedef struct ParametersSet{
+	std::string name,imagePath;
+	double dp, minDist, param1, param2;
+	int minRadius, maxRadius;
+
+}ParametersSet;
+std::vector<Circle*> getCirclesFromImage(ParametersSet set);
+
+ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17};
+ParametersSet DEER_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17};
+
+ParametersSet imagesAndParams[] = {HEART_PARAMETER_SET,DEER_PARAMETER_SET};
 
 /** @function main */
 int main3(int argc, char** argv)
@@ -66,7 +87,9 @@ int main3(int argc, char** argv)
 
 
 
-
+std::vector<Circle*> getCirclesFromImage(ParametersSet set){
+	return getCirclesFromImage(set.imagePath, set.dp,set.minDist,set.param1,set.param2,set.minRadius,set.maxRadius);
+}
 
 std::vector<Circle*> getCirclesFromImage(std::string path, 
 			double dp, double minDist, double param1, double param2, int minRadius, int maxRadius){
@@ -129,8 +152,8 @@ std::vector<Circle*> getCirclesFromImage(std::string path,
 
 
 int main(){
-	std::vector<Circle*> circles = getCirclesFromImage("C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg", 1, 6 ,2,13,2,17);
-	printCircles(circles,"C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg");
+	std::vector<Circle*> circles = getCirclesFromImage(DEER_PARAMETER_SET);
+	printCircles(circles,DEER_PARAMETER_SET.imagePath);
 	
 	return 0;
 }

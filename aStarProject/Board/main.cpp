@@ -4,12 +4,12 @@
 #include <iostream>
 #include <string>
 
+#define RESOURCES_DIR "..\\resources\\"
 
 
 int main(){
-	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
 	Board b;
-	b.init(std::string("circlesFile.txt"), imPath);
+	b.init(std::string("..\\resources\\circlesFile.txt"),std::string("..\\resources\\heart.jpg") );
 
 
 	std::vector<int> solutionPath = b.aStarSearch();

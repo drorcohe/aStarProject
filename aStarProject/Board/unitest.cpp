@@ -31,7 +31,7 @@ int mainReadCircles(int argc, char** argv){
 	return 1;
 }
 
-int main(){
+int mainPrintSolution(){
 	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
 	Board b;
 	b.init(std::string("circlesFile.txt"),imPath);
