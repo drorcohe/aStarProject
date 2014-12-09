@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 #define EPSILON 0.00001
-#define MAX_DIST_FROM_NEIGHBOUR 15
+
 
 class Circle{
 
@@ -29,7 +29,7 @@ public:
 
 class Board{
 public:
-	void init(std::string boardPath,std::string imagePath);
+	void init(std::string boardPath,std::string imagePath,float maxDistFromNeighbour=15);
 	void destroy();
 	std::vector<Circle*> getCircles(){ return circles;};	
 	int getStartCircle(){ return startCircle; };
@@ -41,7 +41,7 @@ public:
 	std::vector<int> aStarSearch();
 
 private:
-	
+	float maxDistFromNeighbour;
 	float maxRadius;
 	std::vector<Circle*> circles;
 	std::map<int,Circle*> indToCircle;

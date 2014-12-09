@@ -21,7 +21,7 @@ float Circle::dist(Circle circle1, Circle circle2){
 	
 }
 
-void Board::init(std::string boardPath,std::string imagePath){
+void Board::init(std::string boardPath,std::string imagePath,float maxDistFromNeighbour){
 	circles = readBoardFromFile(boardPath,startCircle,endCircle);
 	maxRadius = -1;
 	for(int i=0 ; i<circles.size() ; i++){
@@ -35,6 +35,8 @@ void Board::init(std::string boardPath,std::string imagePath){
 		assert(nextCircle->index == i);
 		indToCircle.insert(std::pair<int,Circle*>(nextCircle->index,nextCircle));
 	}
+
+	this->maxDistFromNeighbour = maxDistFromNeighbour;
 
 }
 
@@ -64,7 +66,7 @@ int getEdgeWeight(Circle* n1,Circle* n2){
 
 float Board::getHeuristic(Circle* n1){
 	Circle* end = indToCircle[endCircle];
-	return Circle::dist(*n1,*end)/(maxRadius*2+MAX_DIST_FROM_NEIGHBOUR);
+	return Circle::dist(*n1,*end)/(maxRadius*2+maxDistFromNeighbour);
 }
 
 

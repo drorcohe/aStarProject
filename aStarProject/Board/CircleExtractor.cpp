@@ -9,7 +9,9 @@
 #include "FileReader.h"
 
 using namespace cv;
-
+bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1);
+extern ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17,15};
+extern ParametersSet DEER_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17,10};
 
 //first image: C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg
 //image parameters: HoughCircles( src_gray, circles, CV_HOUGH_GRADIENT, 1, 6 ,2,13,2,17); 
@@ -23,18 +25,8 @@ using namespace cv;
 	min_radius = 0: Minimum radio to be detected. If unknown, put zero as default.
 	max_radius = 0: Maximum radius to be detected. If unknown, put zero as default
 */
-typedef struct ParametersSet{
-	std::string name,imagePath;
-	double dp, minDist, param1, param2;
-	int minRadius, maxRadius;
 
-}ParametersSet;
-std::vector<Circle*> getCirclesFromImage(ParametersSet set);
 
-ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17};
-ParametersSet DEER_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17};
-
-ParametersSet imagesAndParams[] = {HEART_PARAMETER_SET,DEER_PARAMETER_SET};
 
 /** @function main */
 int main3(int argc, char** argv)
@@ -88,11 +80,11 @@ int main3(int argc, char** argv)
 
 
 std::vector<Circle*> getCirclesFromImage(ParametersSet set){
-	return getCirclesFromImage(set.imagePath, set.dp,set.minDist,set.param1,set.param2,set.minRadius,set.maxRadius);
+	return getCirclesFromImage(set.imagePath, set.dp,set.minDist,set.param1,set.param2,set.minRadius,set.maxRadius,set.maxDistFromNeighbour);
 }
 
 std::vector<Circle*> getCirclesFromImage(std::string path, 
-			double dp, double minDist, double param1, double param2, int minRadius, int maxRadius){
+			double dp, double minDist, double param1, double param2, int minRadius, int maxRadius,float maxDistanceFromNeighbours){
 
 	Mat src, src_orig, src_gray, out;
 
@@ -144,14 +136,14 @@ std::vector<Circle*> getCirclesFromImage(std::string path,
 		outCircles.push_back(next);
    }
 
-	extractNeigbours(outCircles);
+	extractNeigbours(outCircles,maxDistanceFromNeighbours);
 	return outCircles;
 
 
 }
 
 
-int main(){
+int main2(){
 	std::vector<Circle*> circles = getCirclesFromImage(DEER_PARAMETER_SET);
 	printCircles(circles,DEER_PARAMETER_SET.imagePath);
 	
@@ -188,10 +180,10 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 
 
 
-void extractNeigbours(std::vector<Circle*> &circleVect){
+void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbour){
 	for(int i=0 ; i<circleVect.size() ; i++){
 		for(int j=i+1 ; j<circleVect.size() ; j++){
-			if( Circle::dist(*circleVect[i],*circleVect[j]) < MAX_DIST_FROM_NEIGHBOUR){
+			if( Circle::dist(*circleVect[i],*circleVect[j]) < maxDistFromNeighbour){
 
 				bool goesThroughAnotherCircle = false;
 				//if the line goes through another circle - they are noy neighbours!
@@ -222,3 +214,61 @@ void extractNeigbours(std::vector<Circle*> &circleVect){
 	}
 }
 
+
+
+
+bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1){
+    // This function checks for the intersection of two circles.
+    // If one circle is wholly contained within the other a -1 is returned
+    // If there is no intersection of the two circles a 0 is returned
+    // If the circles intersect a 1 is returned and
+    // the coordinates are placed in xi1, yi1, xi2, yi2
+ 
+    // dx and dy are the vertical And horizontal distances between
+    // the circle centers.
+    float dx = x1 - x0;
+    float dy = y1 - y0;
+ 
+    // Determine the straight-Line distance between the centers.
+    float d = sqrt((dy*dy) + (dx*dx));
+ 
+ 
+    // Check for solvability.
+    if (d > (r0 + r1)){
+        //'no solution. circles do Not intersect
+        return false;
+	}
+ 
+    if (d < abs(r0 - r1)){
+    // no solution. one circle is contained in the other
+        return true;
+	}
+ 
+    // 'point 2' is the point where the Line through the circle
+    // intersection points crosses the Line between the circle
+    // centers.
+ 
+    // Determine the distance from point 0 To point 2.
+    float a = ((r0*r0) - (r1*r1) + (d*d)) / (2.0 * d);
+ 
+    // Determine the coordinates of point 2.
+    float x2 = x0 + (dx * a/d);
+    float y2 = y0 + (dy * a/d);
+ 
+    // Determine the distance from point 2 To either of the
+    // intersection points.
+    float h = sqrt((r0*r0) - (a*a));
+ 
+    // Now determine the offsets of the intersection points from
+    // point 2.
+    float rx = (0-dy) * (h/d);
+    float ry = dx * (h/d);
+ 
+    // Determine the absolute intersection points.
+    float xi1 = x2 + rx;
+    float xi2 = x2 - rx;
+    float yi1 = y2 + ry;
+    float yi2 = y2 - ry;
+ 
+    return true;
+}

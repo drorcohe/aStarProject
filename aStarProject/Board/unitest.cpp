@@ -9,14 +9,14 @@
 void printNeigbours(std::vector<Circle*> circles, std::string imPath);
 void printBoard(Board b, std::vector<int> solutionPath = std::vector<int>());
 
-int mainWriteBoard(int argc, char** argv){
+int main(int argc, char** argv){
 
-	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
-	std::vector<Circle*> circles = getCirclesFromImage(imPath);
+
+	std::vector<Circle*> circles = getCirclesFromImage(DEER_PARAMETER_SET);
 	//printCircles(circles,imPath);
 
-	writeBoardToFile(circles,std::string("circlesFile.txt"),4,199);
-	printNeigbours(circles,imPath);
+	writeBoardToFile(circles,std::string("..\\resources\\deerBoard.txt"),4,199);
+	printNeigbours(circles,DEER_PARAMETER_SET.imagePath);
 
 	return 1;
 
