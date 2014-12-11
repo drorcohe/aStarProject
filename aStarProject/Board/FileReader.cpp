@@ -38,7 +38,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 		
 		 
 		//extracts circles, until reaches to NEIGBOURS_HEADLINE
-		do 
+		while ( getline (inputFile,line)) 
 		{
 			if(line.compare(NEIGBOURS_HEADLINE) == 0){
 				break;
@@ -59,7 +59,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 			maxCircleIndex = std::max(maxCircleIndex,index);
 
 
-		}while ( getline (inputFile,line));
+		}
 
 
 

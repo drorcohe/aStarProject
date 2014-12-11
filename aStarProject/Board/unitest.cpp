@@ -5,6 +5,7 @@
 #include <string>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "AStarSolver.h"
 
 void printNeigbours(std::vector<Circle*> circles, std::string imPath);
 void printBoard(Board b, std::vector<int> solutionPath = std::vector<int>());
@@ -32,18 +33,25 @@ int mainReadCircles(int argc, char** argv){
 }
 
 int main(){
-	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
+	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoard.txt"),imPath, 5 ,1);
+	b.init(std::string("..\\resources\\shoutBoard.txt"),imPath, 5);
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
-	HoleFillingEnlargeImages(b);
+	//HoleFillingEnlargeImages(b);
 	
 	//printBoard(b);
 	printCircles(b.getCircles(),b.imageFilePath);
 
-	//std::vector<int> solutionPath = b.aStarSearch();
-	//printBoard(b,solutionPath); 
+	std::vector<int> outCircless = std::vector<int>();
+	outCircless.push_back(4);
+	
+
+	outCircless.push_back(4);
+	AStarSolver solver;
+	solver.init(b,1,8,AStarSolver::Direction::ODD);
+	std::vector<int> solutionPath = solver.solve();
+	printBoard(b,solutionPath); 
 	return -1;
 }
 
@@ -59,9 +67,9 @@ void printBoard(Board b, std::vector<int> solutionPath){
 		cv::Point center(nextCircle->y,nextCircle->x);
 
 		cv::Scalar scalar(255,255,255);
-		if(i == b.startCircle){
+		if(i == solutionPath[0]){
 			scalar = cv::Scalar(255,0,0);
-		} else if(i == b.endCircle){
+		} else if(i == solutionPath[solutionPath.size()-1]){
 			scalar = cv::Scalar(0,255,0);
 		}else{
 			for(int j=0 ; j<solutionPath.size() ; j++){

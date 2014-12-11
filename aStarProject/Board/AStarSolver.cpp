@@ -10,11 +10,13 @@
 
 
 
-void AStarSolver::init(Board& board, int startCircle, int endCircle){
+void AStarSolver::init(Board& board, int startCircle, int endCircle,  AStarSolver::Direction direction){
 	this->board = board;
 	this->startCircle = startCircle;
 	this->endCircles = std::vector<int>();
-	this->endCircles.push_back(NOT_IMPORTANT);
+	this->endCircles.push_back(endCircle);
+	this->targetSpinDirections = std::vector<AStarSolver::Direction>();
+	this->targetSpinDirections.push_back(direction);
 }
 
 void AStarSolver::init(Board& board, int startCircle, std::vector<int> endCircles, std::vector<AStarSolver::Direction> directions){
@@ -51,11 +53,13 @@ std::vector<int> reconstruct_path(std::vector<int> cameFrom,int current){
 	return path; //TODO - reverse the order
 }
 
+std::vector<int> AStarSolver::solve(){
+	return aStarSearch(startCircle, endCircles[0],targetSpinDirections[0]);
+}
 
-std::vector<int> AStarSolver::aStarSearch(int start,int end, std::vector<int> invalidIndices){
+std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::Direction endCircleDirection, std::vector<int> invalidIndices){
 
 	std::vector<Circle*> circles = board.getCircles();
-
 
 	std::set<int> closeSet; // The set of nodes already evaluated.
 
@@ -85,7 +89,8 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, std::vector<int> in
 		int currentCircleIndex = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
 		Circle* currentCircle = board.indToCircle[currentCircleIndex];
 		if(currentCircle == board.indToCircle[end]){
-			return reconstruct_path(cameFrom, end);
+			std::vector<int> retPath = reconstruct_path(cameFrom, end);
+			return retPath;
 		}
 
 
@@ -98,6 +103,16 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, std::vector<int> in
 				continue;
 			}
 			Circle* neigbourCircle = board.indToCircle[*neighbour];
+
+			//if this is the endCircle - checks if out path is even or odd before continues.
+			std::vector<int> pathSoFar = reconstruct_path(cameFrom, currentCircle->index);
+			if(neigbourCircle->index==end && endCircleDirection!=NOT_IMPORTANT){
+				if((pathSoFar.size() % 2 == 0 && endCircleDirection==EVEN) || (pathSoFar.size() % 2 == 1 && endCircleDirection==ODD) ){
+					continue;
+				}
+			}
+
+
 			float tentative_g_score = g_score[currentCircleIndex] + 1;
 			if(openSet.count(*neighbour)==0 || tentative_g_score < g_score[*neighbour]){
 				cameFrom[*neighbour] = currentCircle->index;
