@@ -32,11 +32,11 @@ public:
 class Board{
 public:
 	
-	typedef enum ConstraintType{
-		EVEN_PATH, ODD_PATH, NO_CONSTRAINED
-	}ConstraintType;
+	typedef enum Direction{
+		LEFT, RIGHT, NOT_IMPORTANT
+	}Direction;
 
-	void init(std::string boardPath,std::string imagePath, int startCircle, int endCircle, float maxDistFromNeighbour=15, Board::ConstraintType constraint=NO_CONSTRAINED);
+	void init(std::string boardPath,std::string imagePath, int startCircle, int endCircle, float maxDistFromNeighbour=15, Board::Direction direction=NOT_IMPORTANT);
 	void destroy();
 	std::vector<Circle*> getCircles(){ return circles;};	
 	std::vector<Circle*>& getCirclesRef(){ return circles;};
@@ -52,9 +52,10 @@ public:
 	
 	float maxDistFromNeighbour;
 	
-	ConstraintType constraintType;
+	Board::Direction direction;
 	float getHeuristic(Circle* n1);
 	std::map<int,Circle*> indToCircle;
+
 
 private:
 	int height, width;

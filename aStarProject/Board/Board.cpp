@@ -37,7 +37,7 @@ void Board::removeCircles(float minR, float maxR, int leftX, int rightX, int bot
 }
 
 
-void Board::init(std::string boardPath,std::string imagePath, int startCircle, int endCircle, float maxDistFromNeighbour, Board::ConstraintType constraint){
+void Board::init(std::string boardPath,std::string imagePath, float maxDistFromNeighbour){
 	circles = readBoardFromFile(boardPath);
 	maxRadius = -1;
 	for(int i=0 ; i<circles.size() ; i++){
@@ -54,9 +54,7 @@ void Board::init(std::string boardPath,std::string imagePath, int startCircle, i
 
 	this->maxDistFromNeighbour = maxDistFromNeighbour;
 
-	this->startCircle = startCircle;
-	this->endCircle = endCircle;
-	this->constraintType = constraintType;
+
 }
 
 void Board::destroy(){
@@ -83,25 +81,6 @@ int getEdgeWeight(Circle* n1,Circle* n2){
 	return 1;
 }
 
-float Board::getHeuristic(Circle* n1){
-	Circle* end = indToCircle[endCircle];
-	return Circle::dist(*n1,*end)/(maxRadius*2+maxDistFromNeighbour);
-}
 
 
-
-
-int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
-	float minFScore = 100000000;
-	int minIndex = -1;
-
-	std::set<int>::iterator it;
-	for (it = openSet.begin(); it != openSet.end(); ++it){
-		if (f_score[*it] < minFScore){
-			minIndex = *it;
-			minFScore = f_score[*it];
-		}
-	}
-	return minIndex;
-}
 
