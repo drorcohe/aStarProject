@@ -8,7 +8,7 @@
 #include "AStarSolver.h"
 
 void printNeigbours(std::vector<Circle*> circles, std::string imPath);
-void printBoard(Board b, std::vector<int> solutionPath = std::vector<int>());
+void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles = std::vector<int>() );
 
 int mainWrite(int argc, char** argv){
 
@@ -43,20 +43,29 @@ int main(){
 	//printBoard(b);
 	printCircles(b.getCircles(),b.imageFilePath);
 
-	std::vector<int> outCircless = std::vector<int>();
-	outCircless.push_back(4);
-	
+	std::vector<int> endCircles = std::vector<int>();
+	endCircles.push_back(4);
+	endCircles.push_back(9);
+	endCircles.push_back(33);
+	//endCircles.push_back(90);
 
-	outCircless.push_back(4);
+	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
+	directions.push_back(AStarSolver::Direction::LEFT);
+	directions.push_back(AStarSolver::Direction::RIGHT);
+	directions.push_back(AStarSolver::Direction::RIGHT);
+	//directions.push_back(AStarSolver::Direction::RIGHT);
 	AStarSolver solver;
-	solver.init(b,1,8,AStarSolver::Direction::ODD);
+
+
+
+	solver.init(b,1,endCircles,directions);
 	std::vector<int> solutionPath = solver.solve();
-	printBoard(b,solutionPath); 
+	printBoard(b,solutionPath,1,endCircles); 
 	return -1;
 }
 
 
-void printBoard(Board b, std::vector<int> solutionPath){
+void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles ){
 	cv::Mat src = cv::imread( b.imageFilePath, 1 );
 	if( !src.data )
 	 { exit(1); }
@@ -67,9 +76,9 @@ void printBoard(Board b, std::vector<int> solutionPath){
 		cv::Point center(nextCircle->y,nextCircle->x);
 
 		cv::Scalar scalar(255,255,255);
-		if(i == solutionPath[0]){
+		if(i == startCircle){
 			scalar = cv::Scalar(255,0,0);
-		} else if(i == solutionPath[solutionPath.size()-1]){
+		} else if(std::find(endCircles.begin(), endCircles.end(), i) != endCircles.end() || i==endCircles[endCircles.size()-1]){
 			scalar = cv::Scalar(0,255,0);
 		}else{
 			for(int j=0 ; j<solutionPath.size() ; j++){

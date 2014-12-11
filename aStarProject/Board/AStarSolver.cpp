@@ -7,7 +7,7 @@
 #include <functional>
 #include <assert.h>
 #include "FileReader.h"
-
+#include <algorithm>
 
 
 void AStarSolver::init(Board& board, int startCircle, int endCircle,  AStarSolver::Direction direction){
@@ -54,10 +54,65 @@ std::vector<int> reconstruct_path(std::vector<int> cameFrom,int current){
 }
 
 std::vector<int> AStarSolver::solve(){
-	return aStarSearch(startCircle, endCircles[0],targetSpinDirections[0]);
+	std::sort (endCircles.begin(),endCircles.end());
+
+	int bestPath  = INT_MAX;
+	std::vector<int> bestPathSoFar = std::vector<int>();
+	
+	do {
+		bool invalidPath = false;
+		AStarSolver::Direction previousDirection = RIGHT; //first circle always goes right
+		std::vector<int> currentPath = std::vector<int>();
+		int subPathStartCircle = startCircle;
+
+		for(int i=0 ; i< endCircles.size() ; i++){
+
+			assert(targetSpinDirections[i]!=NOT_IMPORTANT);
+
+			AStarSolver::PathType pathType = previousDirection == targetSpinDirections[i]? EVEN : ODD;
+			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],pathType,currentPath);
+			if(bestSubPath.size()==0){
+				invalidPath = true;
+				break;
+			}
+			currentPath.insert(currentPath.end(),bestSubPath.begin(),bestSubPath.end()-1);
+
+			assert(bestSubPath.size() > 0 && ((bestSubPath.size()%2 == 0 && pathType==EVEN) ||
+				(bestSubPath.size()%2 == 1 && pathType==ODD) || pathType==TYPE_NOT_IMPORTANT));
+
+			subPathStartCircle = endCircles[i];
+			previousDirection = targetSpinDirections[i];
+		}
+
+		if(invalidPath){
+			continue;
+		}
+		currentPath.push_back(endCircles[endCircles.size()-1]);
+		if(currentPath.size()<bestPath){
+			bestPathSoFar = currentPath;
+			bestPath = currentPath.size();
+		}
+	} while ( std::next_permutation(endCircles.begin(),endCircles.end()) );
+
+
+#ifdef DEBUG
+	int numOfFoundedTargets = 0;
+
+	for(int i=0 ; i<endCircles.size() ; i++){
+		for(int j=0 ; j<bestPathSoFar.size() ; j++){
+			if(endCircles[i]==bestPathSoFar[j]){
+				numOfFoundedTargets++;
+				break;
+			}
+		}
+	}
+	assert(numOfFoundedTargets==endCircles.size());
+#endif
+	return bestPathSoFar;
+
 }
 
-std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::Direction endCircleDirection, std::vector<int> invalidIndices){
+std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::PathType pathType, std::vector<int> invalidIndices){
 
 	std::vector<Circle*> circles = board.getCircles();
 
@@ -106,11 +161,21 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::Direct
 
 			//if this is the endCircle - checks if out path is even or odd before continues.
 			std::vector<int> pathSoFar = reconstruct_path(cameFrom, currentCircle->index);
-			if(neigbourCircle->index==end && endCircleDirection!=NOT_IMPORTANT){
-				if((pathSoFar.size() % 2 == 0 && endCircleDirection==EVEN) || (pathSoFar.size() % 2 == 1 && endCircleDirection==ODD) ){
+			if(neigbourCircle->index==end && pathType!=NOT_IMPORTANT){
+				if((pathSoFar.size() % 2 == 0 && pathType==EVEN) || (pathSoFar.size() % 2 == 1 && pathType==ODD) ){
 					continue;
 				}
 			}
+
+			//if we are not allowed to go through this circle - continue regularly
+			bool isInvalidNeigbour = false;
+			for(int t=0 ; t< invalidIndices.size() ;t++){
+				isInvalidNeigbour |= (invalidIndices[t]==neigbourCircle->index);
+			}
+			if(isInvalidNeigbour){
+				continue;
+			}
+			
 
 
 			float tentative_g_score = g_score[currentCircleIndex] + 1;
@@ -127,7 +192,10 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::Direct
 
 	}
 
-	assert(0==1);
+	if(invalidIndices.size()==0){
+		assert(0==1);
+	}
+	
 
 	return std::vector<int>();
 	

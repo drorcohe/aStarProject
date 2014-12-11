@@ -64,11 +64,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Board\AStarSolver.cpp" />
     <ClCompile Include="..\Board\Board.cpp" />
     <ClCompile Include="..\Board\FileReader.cpp" />
     <ClCompile Include="..\Board\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Board\AStarSolver.h" />
     <ClInclude Include="..\Board\Board.h" />
     <ClInclude Include="..\Board\FileReader.h" />
   </ItemGroup>

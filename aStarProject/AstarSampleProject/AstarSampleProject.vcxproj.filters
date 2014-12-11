@@ -24,12 +24,18 @@
     <ClCompile Include="..\Board\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Board\AStarSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Board\Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Board\FileReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Board\AStarSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
