@@ -15,7 +15,7 @@ int mainWrite(int argc, char** argv){
 	std::vector<Circle*> circles = getCirclesFromImage(MAP_PARAMETER_SET);
 	printCircles(circles,MAP_PARAMETER_SET.imagePath);
 
-	writeBoardToFile(circles,std::string("..\\resources\\mapBoard.txt"),4,199);
+	writeBoardToFile(circles,std::string("..\\resources\\mapBoard.txt"));
 	printNeigbours(circles,MAP_PARAMETER_SET.imagePath);
 
 	return 1;
@@ -25,7 +25,7 @@ int mainWrite(int argc, char** argv){
 int mainReadCircles(int argc, char** argv){
 	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
 	int startCircle,  endCircle;
-	std::vector<Circle*> circles = readBoardFromFile(std::string("circlesFile.txt"),startCircle,endCircle);
+	std::vector<Circle*> circles = readBoardFromFile(std::string("circlesFile.txt"));
 	//printCircles(circles,imPath);
 	printNeigbours(circles,imPath);
 	return 1;
@@ -34,11 +34,16 @@ int mainReadCircles(int argc, char** argv){
 int main(){
 	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\merlinBoard.txt"),imPath);
-	printBoard(b);
+	b.init(std::string("..\\resources\\shoutBoard.txt"),imPath, 5 ,1);
+	//b.removeCircles(3);
+//	HoleFillingAddCircles(b);
+	HoleFillingEnlargeImages(b);
+	
+	//printBoard(b);
+	printCircles(b.getCircles(),b.imageFilePath);
 
-	std::vector<int> solutionPath = b.aStarSearch();
-	printBoard(b,solutionPath); 
+	//std::vector<int> solutionPath = b.aStarSearch();
+	//printBoard(b,solutionPath); 
 	return -1;
 }
 

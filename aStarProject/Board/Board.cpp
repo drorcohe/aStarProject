@@ -21,15 +21,31 @@ float Circle::dist(Circle circle1, Circle circle2){
 	
 }
 
-void Board::init(std::string boardPath,std::string imagePath,float maxDistFromNeighbour){
-	circles = readBoardFromFile(boardPath,startCircle,endCircle);
+
+
+
+void Board::removeCircles(float minR, float maxR, int leftX, int rightX, int bottomY, int topY){
+	for(int i=0 ; i< this->circles.size() ; i++){
+		circles[i]->neighbours = std::vector<int>();
+		if(circles[i]->radius < minR){
+			circles.erase(circles.begin()+i);
+			i--;
+		}
+	}
+	
+	
+}
+
+
+void Board::init(std::string boardPath,std::string imagePath, int startCircle, int endCircle, float maxDistFromNeighbour, Board::ConstraintType constraint){
+	circles = readBoardFromFile(boardPath);
 	maxRadius = -1;
 	for(int i=0 ; i<circles.size() ; i++){
 		maxRadius = maxRadius > circles[i]->radius ? maxRadius : circles[i]->radius;
 	}
 
 	imageFilePath = imagePath;
-
+	
 	for(int i=0 ; i<circles.size() ; i++){
 		Circle* nextCircle = circles[i];
 		assert(nextCircle->index == i);
@@ -38,6 +54,9 @@ void Board::init(std::string boardPath,std::string imagePath,float maxDistFromNe
 
 	this->maxDistFromNeighbour = maxDistFromNeighbour;
 
+	this->startCircle = startCircle;
+	this->endCircle = endCircle;
+	this->constraintType = constraintType;
 }
 
 void Board::destroy(){
@@ -72,17 +91,6 @@ float Board::getHeuristic(Circle* n1){
 
 
 
-std::vector<int> reconstruct_path(std::vector<int> cameFrom,int current){
-	std::vector<int> path;
-	while(current != -1){
-		path.push_back(current);
-		current = cameFrom.at(current);
-	}
-
-	return path; //TODO - reverse the order
-}
-
-
 int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
 	float minFScore = 100000000;
 	int minIndex = -1;
@@ -95,74 +103,5 @@ int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
 		}
 	}
 	return minIndex;
-}
-
-
-std::vector<int> Board::aStarSearch(){
-
-	std::vector<Circle*> board = this->getCircles();
-	int start = this->startCircle;
-	int end = this->endCircle;
-
-	std::set<int> closeSet; // The set of nodes already evaluated.
-
-	 // The set of tentative nodes to be evaluated, initially containing the start node
-	//std::priority_queue<int, std::vector<int>, std::greater<int>> openSetQueue;
-	std::set<int> openSet;
-	openSet.insert(start);
-	
-
-	std::vector<int> cameFrom(board.size());  ; //a map of navigated nodes
-	for(int i=0 ; i< board.size() ; i++){
-		cameFrom[i] = -1;
-	}
-
-	std::vector<float> g_score(board.size());  
-	g_score[start] = 0; // Cost from start along best known path.
-	//std::vector<float> tenative_g_score(board.size()); // Cost from start along best known path.
-	 
-	
-	//Estimated total cost from start to goal through y.
-	std::vector<float> f_score(board.size());  // Cost from start along best known path.
-	f_score[start] = g_score[start] + this->getHeuristic(indToCircle[start]);
-	
-	while(openSet.size() > 0){
-		
-		
-		int currentCircleIndex = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
-		Circle* currentCircle = indToCircle[currentCircleIndex];
-		if(currentCircle == indToCircle[endCircle]){
-			return reconstruct_path(cameFrom, endCircle);
-		}
-
-
-		openSet.erase(currentCircle->index);
-		closeSet.insert(currentCircle->index);
-
-		for(std::vector<int>::iterator neighbour = currentCircle->neighbours.begin(); neighbour != currentCircle->neighbours.end(); ++neighbour) {
-			//if the neighbour is already in the close set - continue
-			if(closeSet.count(*neighbour)!=0){
-				continue;
-			}
-			Circle* neigbourCircle = indToCircle[*neighbour];
-			float tentative_g_score = g_score[currentCircleIndex] + 1;
-			if(openSet.count(*neighbour)==0 || tentative_g_score < g_score[*neighbour]){
-				cameFrom[*neighbour] = currentCircle->index;
-				g_score[*neighbour] = tentative_g_score;
-				f_score[*neighbour] = g_score[*neighbour] + getHeuristic(neigbourCircle);
-				if(openSet.count(*neighbour)==0){
-					openSet.insert(*neighbour);
-				}
-			}
-
-		}
-
-	}
-
-	assert(0==1);
-
-	return std::vector<int>();
-	
-	
 }
 

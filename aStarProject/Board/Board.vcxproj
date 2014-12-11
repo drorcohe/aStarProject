@@ -66,15 +66,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AStarSolver.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="BoardImprover.h" />
     <ClInclude Include="CircleExtractor.h" />
     <ClInclude Include="FileReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AStarSolver.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="CircleExtractor.cpp" />
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="unitest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BoardImprover.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

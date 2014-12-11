@@ -83,6 +83,97 @@ int main3(int argc, char** argv)
 }
 
 
+#define MIN_RADIUS 2
+void HoleFillingAddCircles(Board& board){
+
+
+
+
+	std::vector<Circle*>& circles = board.getCirclesRef();
+	/*
+	for(int i=0 ; i<circles.size() ; i++){
+		circles[i]->neighbours = vector<int>();
+	}
+	extractNeigbours(circles, board.maxDistFromNeighbour*, false);
+	*/
+	
+	int nextIndex = circles.size();
+	for(int i=0 ; i<circles.size() ; i++){
+		Circle* firstCircle = circles[i];
+		for(int j=0 ; j<firstCircle->neighbours.size() ; j++){
+			
+			Circle* secondCircle =circles[firstCircle->neighbours[j]];
+
+			float newCircleX = (secondCircle->x + firstCircle->x) / 2;
+			float newCircleY = (secondCircle->y + firstCircle->y) / 2;
+			float radius = max(firstCircle->radius,secondCircle->radius);
+
+			while(radius >= MIN_RADIUS){
+				bool addNewCircle = true;
+				for(int k=0 ; k<circles.size() ; k++){
+					if(doesCirclesIntersect(newCircleX,newCircleY,radius,circles[k]->x,circles[k]->y,circles[k]->radius)){
+						addNewCircle = false;
+						break;
+					}
+				}
+				if(addNewCircle){
+					int R = (firstCircle->R + secondCircle->R)/2;
+					int G = (firstCircle->G + secondCircle->G)/2;
+					int B = (firstCircle->B + secondCircle->B)/2;
+
+					Circle* newCircle = new Circle(newCircleX,newCircleY,nextIndex,radius,R,G,B);
+					circles.push_back(newCircle);
+					nextIndex++;
+				}else{
+					radius = radius / 1.2;
+					break;
+				}
+				
+	
+			}
+			
+		}
+	}
+
+	for(int i=0 ; i<circles.size() ; i++){
+		circles[i]->neighbours = vector<int>();
+	}
+
+	board.maxDistFromNeighbour = board.maxDistFromNeighbour / 2;
+	extractNeigbours(circles, board.maxDistFromNeighbour);
+
+	int a = 3;
+}
+
+
+void HoleFillingEnlargeImages(Board& board){
+
+	std::vector<Circle*> circles = board.getCircles();
+	int nextIndex = circles.size() + 1;
+	float multFactor = 1.1;
+
+	for(int k=0 ; k<15 ; k++){
+
+		for(int i=0 ; i<circles.size() ; i++){
+			Circle* circle = circles[i];
+			int newRadius = circle->radius * 1.1;
+
+			bool changeRadius = true;
+			for(int j=0 ; j<circle->neighbours.size() ; j++){
+				Circle* secondCircle =circles[circle->neighbours[j]];
+				if(doesCirclesIntersect(circle->x,circle->y,newRadius,secondCircle->x,secondCircle->y,secondCircle->radius)){
+					changeRadius = false;
+					break;
+				}
+			}
+			if(changeRadius){
+				circle->radius = newRadius;
+			}
+			
+		}
+	}
+}
+
 
 std::vector<Circle*> getCirclesFromImage(ParametersSet set){
 	return getCirclesFromImage(set.imagePath, set.dp,set.minDist,set.param1,set.param2,set.minRadius,set.maxRadius,set.maxDistFromNeighbour);
@@ -185,7 +276,7 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 
 
 
-void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbour){
+void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbour, bool addOpt){
 
 	//first iteration - each pair of circles is labled as a pair of neighbours according to their distance only
 	for(int i=0 ; i<circleVect.size() ; i++){
@@ -195,6 +286,9 @@ void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbo
 				circleVect[j]->neighbours.push_back(circleVect[i]->index);
 			}
 		}
+	}
+	if(!addOpt){
+		return;
 	}
 
 	//second iteration - we remove neigbours if there is another circle which stands in the way

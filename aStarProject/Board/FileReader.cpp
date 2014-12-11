@@ -1,15 +1,10 @@
 #include "FileReader.h"
 
 
-void writeBoardToFile(std::vector<Circle*> circles, std::string fileName, int startCircle, int endCircle){
+void writeBoardToFile(std::vector<Circle*> circles, std::string fileName){
 	
 	std::ofstream outputFile;
 	outputFile.open(fileName);
-
-	if(startCircle!=-1 && endCircle != -1){
-		outputFile << BOARD_START_END_HEADLINE << std::endl;
-		outputFile<<startCircle << " " <<endCircle << std::endl;
-	}
 
 
 	for(int i=0 ; i<circles.size() ; i++ ){
@@ -31,7 +26,7 @@ void writeBoardToFile(std::vector<Circle*> circles, std::string fileName, int st
 }
 
 
-std::vector<Circle*> readBoardFromFile(std::string fileName, int& startCircle, int& endCircle){
+std::vector<Circle*> readBoardFromFile(std::string fileName){
 	std::vector<Circle*> retVec;
 	
 
@@ -41,15 +36,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName, int& startCircle, i
 	if (inputFile.is_open())
 	 {
 		
-		 if(getline (inputFile,line)){
-			 if(line.compare(std::string(BOARD_START_END_HEADLINE)) == 0){
-				getline (inputFile,line);
-				std::istringstream ss(line);
-				ss >> startCircle;
-				ss >> endCircle;
-				getline (inputFile,line);
-			}
-		 }
+		 
 		//extracts circles, until reaches to NEIGBOURS_HEADLINE
 		do 
 		{

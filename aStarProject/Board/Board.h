@@ -21,6 +21,8 @@ public:
 
 	inline bool operator==(const Circle& other);
 
+
+
 	static float dist(Circle circle1, Circle circle2);
 	
 };
@@ -29,23 +31,37 @@ public:
 
 class Board{
 public:
-	void init(std::string boardPath,std::string imagePath,float maxDistFromNeighbour=15);
+	
+	typedef enum ConstraintType{
+		EVEN_PATH, ODD_PATH, NO_CONSTRAINED
+	}ConstraintType;
+
+	void init(std::string boardPath,std::string imagePath, int startCircle, int endCircle, float maxDistFromNeighbour=15, Board::ConstraintType constraint=NO_CONSTRAINED);
 	void destroy();
 	std::vector<Circle*> getCircles(){ return circles;};	
+	std::vector<Circle*>& getCirclesRef(){ return circles;};
+
+	void removeCircles(float minR, float maxR=-1, int leftX=-1, int rightX=-1, int bottomY=-1, int topY=-1);
+
 	int getStartCircle(){ return startCircle; };
 	int getEndCircle(){ return endCircle; };
 	int getMaxRadius(){ return maxRadius; };
 	std::vector<int> getSolution();
 	std::string imageFilePath;
 	int startCircle,endCircle;
-	std::vector<int> aStarSearch();
+	
+	float maxDistFromNeighbour;
+	
+	ConstraintType constraintType;
+	float getHeuristic(Circle* n1);
+	std::map<int,Circle*> indToCircle;
 
 private:
-	float maxDistFromNeighbour;
+	int height, width;
 	float maxRadius;
 	std::vector<Circle*> circles;
-	std::map<int,Circle*> indToCircle;
-	float getHeuristic(Circle* n1);
+	
+	
 	
 	
 };
