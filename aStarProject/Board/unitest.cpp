@@ -39,7 +39,7 @@ int mainReadCircles(int argc, char** argv){
 int main(){
 	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoard.txt"),imPath, 5);
+	b.init(std::string("..\\resources\\shoutBoardFixed2.txt"),imPath, 5);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
@@ -54,7 +54,7 @@ int main(){
 	//cv::waitKey(0);
 
 	printCircles(b.getCircles(),b.imageFilePath);
-
+	cv::waitKey(0);
 
 	//thresholdBoard(b,50,50,250,1000,0,1000);
 	thresholdBoard(b,5,50,250,1000,0,1000);
