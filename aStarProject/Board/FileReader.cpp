@@ -9,7 +9,7 @@ void writeBoardToFile(std::vector<Circle*> circles, std::string fileName){
 
 	for(int i=0 ; i<circles.size() ; i++ ){
 		Circle* circle = circles[i];
-		outputFile<< circle->x <<" " << circle ->y <<" " << circle->radius << " " <<circle->R <<" " <<circle->G<<" " << circle->B << " " << circle->index <<std::endl;
+		outputFile<< circle->y <<" " << circle ->x <<" " << circle->radius << " " <<circle->R <<" " <<circle->G<<" " << circle->B << " " << circle->index <<std::endl;
 	}
 
 	outputFile<<NEIGBOURS_HEADLINE<<std::endl;
@@ -46,8 +46,8 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 			std::istringstream ss(line);
 			int x ,y, radius, R,G,B, index;
 
-			ss >> x;
 			ss >> y;
+			ss >> x;
 			ss >> radius;
 			ss >> R;
 			ss >> G;

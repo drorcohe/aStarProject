@@ -1,8 +1,6 @@
 #include "CircleExtractor.h"
 #include "Board.h"
 
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
 #include <stdio.h>
 
@@ -246,7 +244,7 @@ int main2(){
 	return 0;
 }
 
-void printCircles(std::vector<Circle*> circles,std::string imPath){
+cv::Mat printCircles(std::vector<Circle*> circles,std::string imPath){
 	 /// Read the image
 	 Mat src = imread( imPath, 1 );
 
@@ -259,7 +257,7 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 	for(int i=0 ; i<circles.size() ; i++ ){
 		Circle* nextCircle = circles[i];
 		
-		cv::Point center(nextCircle->y,nextCircle->x);
+		cv::Point center(nextCircle->x,nextCircle->y);
 		int R = circles[i]->R; int G = circles[i]->G; int B = circles[i]->B;
 
 		circle( blankMat, center, circles[i]->radius, Scalar(R,G,B),CV_FILLED );
@@ -269,6 +267,7 @@ void printCircles(std::vector<Circle*> circles,std::string imPath){
 
 	
 	imshow( "Hough Circle Transform Demo", blankMat );
+	return blankMat;
 
 	waitKey(0);
 }

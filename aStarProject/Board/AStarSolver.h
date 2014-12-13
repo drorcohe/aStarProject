@@ -25,6 +25,7 @@ public:
 	int startCircle;
 
 private:
+
 	std::vector<int> aStarSearch(int start,int end,AStarSolver::PathType pathLength = AStarSolver::PathType::TYPE_NOT_IMPORTANT, std::vector<int> invalidIndices=std::vector<int>());
 	float getHeuristic(Circle* n1, int endCircle);
 	Board board;

@@ -47,10 +47,8 @@
     <ClCompile Include="AStarSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="BoardImprover.cpp">
+    <ClCompile Include="BoardImprover.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>

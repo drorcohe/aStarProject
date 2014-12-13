@@ -49,7 +49,7 @@ public:
 	float maxDistFromNeighbour;
 	
 	
-	
+	std::string boardFileName;
 	std::map<int,Circle*> indToCircle;
 	float maxRadius;
 

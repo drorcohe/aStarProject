@@ -1,3 +1,4 @@
+#include "BoardImprover.h"
 #include "CircleExtractor.h"
 #include "FileReader.h"
 #include "Board.h"
@@ -6,6 +7,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "AStarSolver.h"
+
+
+
 
 void printNeigbours(std::vector<Circle*> circles, std::string imPath);
 void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles = std::vector<int>() );
@@ -36,13 +40,41 @@ int main(){
 	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
 	b.init(std::string("..\\resources\\shoutBoard.txt"),imPath, 5);
+	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
+
+
+	BoardImprover boardImp(b);
+
+	Circle* circle = new Circle(1,400,1,50,255,0,0);
+	std::vector<Circle*> circi;
+	circi.push_back(circle);
+	//printCircles(circi,b.imageFilePath);
+	//cv::waitKey(0);
+
+	printCircles(b.getCircles(),b.imageFilePath);
+
+
+	//thresholdBoard(b,50,50,250,1000,0,1000);
+	thresholdBoard(b,5,50,250,1000,0,1000);
+	//thresholdBoard(b,4,50,0,1000,0,1000);
+	printCircles(b.getCircles(),b.imageFilePath);
+
+	boardImp.fixBoard();
+	printCircles(b.getCircles(),b.imageFilePath);
+	writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed2.txt");
+	cv::waitKey(0);
+	//boardImp.openGUI("..\\resources\\shoutBoardFixed2.txt");
 	//HoleFillingEnlargeImages(b);
 	
 	//printBoard(b);
 	printCircles(b.getCircles(),b.imageFilePath);
 
+	writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardThreshoalded.txt");
+	cv::waitKey(0);
+
+	exit(1);
 	std::vector<int> endCircles = std::vector<int>();
 	endCircles.push_back(4);
 	endCircles.push_back(9);
@@ -73,7 +105,7 @@ void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::ve
 
 	for(int i=0 ; i<b.getCircles().size() ; i++ ){
 		Circle* nextCircle = b.getCircles()[i];
-		cv::Point center(nextCircle->y,nextCircle->x);
+		cv::Point center(nextCircle->x,nextCircle->y);
 
 		cv::Scalar scalar(255,255,255);
 		if(i == startCircle){
