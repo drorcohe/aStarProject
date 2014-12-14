@@ -185,7 +185,7 @@ void BoardImprover::fixBoard(){
 		b.getCirclesRef()[i]->index = i;
 		b.getCirclesRef()[i]->neighbours = std::vector<int>();
 	}
-	b.maxDistFromNeighbour = 1;
+
 	extractNeigbours(b.getCirclesRef(),b.maxDistFromNeighbour,true);
 
 }
@@ -304,3 +304,25 @@ void HoleFillingAddCircles(Board& board){
 	int a = 3;
 }
 
+void fixColors(Board& board){
+	for(int i=0 ; i<board.getCircles().size() ; i++){
+		Circle* nextCircle = board.getCircles()[i];
+		if(nextCircle->R + nextCircle->G + nextCircle->B < 100){
+			int newR=0;int newG=0;int newB=0;
+			for(int j=0 ; j<nextCircle->neighbours.size() ; j++){
+				Circle* neigbour = board.indToCircle[nextCircle->neighbours[j]];
+				newR = newR + neigbour->R;
+				newG = newG + neigbour->G;
+				newB = newB + neigbour->B;
+			}
+			nextCircle->R = newR / nextCircle->neighbours.size();
+			nextCircle->G = newG / nextCircle->neighbours.size();
+			nextCircle->B = newB / nextCircle->neighbours.size();
+			if(abs(nextCircle->R - nextCircle->G) < 30 && + abs(nextCircle->R - nextCircle->G) < 30 && abs(nextCircle->R - nextCircle->G) < 30){
+				nextCircle->B = nextCircle->B + 100 % 255;
+			}
+		}
+		
+	}
+
+}

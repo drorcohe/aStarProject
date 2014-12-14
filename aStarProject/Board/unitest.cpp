@@ -40,22 +40,24 @@ int mainReadCircles(int argc, char** argv){
 int main(){
 	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoardFixed2.txt"),imPath, 5);
+	b.init(std::string("..\\resources\\shoutBoardFixed4.txt"),imPath, SHOUT_PARAMETER_SET.maxDistFromNeighbour);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 
-
+	
 	BoardImprover boardImp(b);
+	fixColors(b);
+	boardImp.openGUI("..\\resources\\shoutBoardFixed4.txt");
+	//boardImp.fixBoard();
 
-	Circle* circle = new Circle(1,400,1,50,255,0,0);
-	std::vector<Circle*> circi;
-	circi.push_back(circle);
+	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed3.txt");
 	//printCircles(circi,b.imageFilePath);
 	//cv::waitKey(0);
 
 	printCircles(b.getCircles(),b.imageFilePath);
 	cv::waitKey(0);
+	/*cv::waitKey(0);
 
 	HoleFillingEnlargeImages(b);
 	thresholdBoard(b,3,50,0,1000,0,1000);
@@ -78,7 +80,8 @@ int main(){
 	writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardThreshoalded.txt");
 	cv::waitKey(0);
 
-	exit(1);
+	exit(1);*/
+	cv::waitKey();
 	std::vector<int> endCircles = std::vector<int>();
 	endCircles.push_back(4);
 	endCircles.push_back(9);

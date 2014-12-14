@@ -26,7 +26,7 @@ void writeBoardToFile(std::vector<Circle*> circles, std::string fileName){
 }
 
 
-void readBoardFromFile(std::string fileName,std::vector<Circle*> circles){
+void readBoardFromFile(std::string fileName,std::vector<Circle*>& circles){
 	
 	
 
