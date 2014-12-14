@@ -5,8 +5,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
-
+#include <set>
+bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList= std::set<Circle*>());
 char latestPressedKey = -1;
 std::vector<Circle*>* gCircles;  
 cv::Mat gMat, gIm;
@@ -16,9 +16,12 @@ BoardImprover::BoardImprover(Board &board) : b(board){
 
 }
 
-bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r){
+bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList){
 	std::vector<Circle*>::iterator it;
 	for (it =circles.begin(); it != circles.end(); it++) {
+		if(ignoreList.find(*it) != ignoreList.end()){
+			continue;
+		}
 		if(doesCirclesIntersect(x,y,r,(*it)->x,(*it)->y,(*it)->radius)){
 			return false;
 		}
@@ -57,7 +60,7 @@ cv::Mat reRenderCircles(std::vector<Circle*> circles, cv::Size size, int type){
 
 	for(int i=0; i<circles.size() ; i++ ){
 		Circle* nextCircle = circles[i];
-		cv::Point center(nextCircle->y,nextCircle->x);
+		cv::Point center(nextCircle->x,nextCircle->y);
 		int R = nextCircle->R; int G = nextCircle->G; int B = nextCircle->B;
 		circle( circlesMat, center, nextCircle->radius, cv::Scalar(R,G,B),CV_FILLED );
 	}
@@ -109,7 +112,9 @@ static void onMouse( int event, int x, int y, int, void* )
 		Circle* closestCircle = findClosestCircle(*gCircles,x,y);
 		if(latestPressedKey=='i'|| latestPressedKey=='j'){
 			int addition = latestPressedKey=='i'? 1:-1;
-			if (!isNewCircleValidHere(*gCircles,x,y,closestCircle->radius+addition) ){
+			std::set<Circle*> ignoreSet = std::set<Circle*>();
+			ignoreSet.insert(closestCircle);
+			if (!isNewCircleValidHere(*gCircles,x,y,closestCircle->radius+addition,ignoreSet) ){
 				std::cout<<"cant increment radius, it is too big"<<std::endl;
 			}else{
 				closestCircle->radius += addition;
@@ -120,6 +125,10 @@ static void onMouse( int event, int x, int y, int, void* )
 		}
 
 	}
+
+	cv::destroyAllWindows();
+	gMat = reRenderCircles(*gCircles,gIm.size(),gIm.type());
+	cv::setMouseCallback(std::string("circles rendering"), onMouse);
 
 	
     
@@ -133,23 +142,31 @@ void BoardImprover::openGUI(std::string newFileName){
 	gIm = im.clone();
 	gMat = reRenderCircles(*gCircles,gIm.size(),gIm.type());
 	cv::setMouseCallback(std::string("circles rendering"), onMouse);
-	std::cout<<"press ESC to exit \n d to delete circle \n a to add circle \n i to increment radius \n j to decrement radius \n r to render again here \n s  to save\n";
+	std::cout<<"press ESC to exit \n d to delete circle \n a to add circle \n i to increment radius \n j to decrement radius \n r to render again here \n s  to save\n  h for hole filling \n";
 
 	while(1==1){
 		char newKey = cv::waitKey();
 		if(latestPressedKey != newKey){
 			if(newKey=='d' || newKey=='a' || newKey=='i' || newKey=='j' || newKey=='s' || newKey=='r'|| newKey==27){
-				std::cout<<"moved to operation: "<< std::string(1,newKey)<<std::endl;
+				std::cout<<"switched to operation: "<< std::string(1,newKey)<<std::endl;
 				latestPressedKey = newKey;
 			}
 			if(newKey == 's'){
 				fixBoard();
 				writeBoardToFile(b.getCirclesRef(),newFileName);
+				std::cout<<"board was written to file\n";
+			}else if(newKey == 'h'){
+				HoleFillingEnlargeImages(b);
+				gMat = reRenderCircles(*gCircles,gIm.size(),gIm.type());
+				cv::setMouseCallback(std::string("circles rendering"), onMouse);
+				std::cout<<"hole filling was performed\n";
 			}else if(newKey==27){
 				exit(1);
 			}else if(newKey=='r'){
 				cv::destroyAllWindows();
 				gMat = reRenderCircles(*gCircles,gIm.size(),gIm.type());
+				cv::setMouseCallback(std::string("circles rendering"), onMouse);
+				std::cout<<"rerendered screen\n";
 			}
 
 		}
@@ -183,3 +200,101 @@ void thresholdBoard(Board& b, int min,int max, int xLeft, int xRight, int yBotto
     }
 
 }
+
+
+
+void HoleFillingEnlargeImages(Board& board){
+
+	std::vector<Circle*> circles = board.getCircles();
+	int nextIndex = circles.size() + 1;
+	float multFactor = 1.1;
+
+	for(int k=0 ; k<15 ; k++){
+
+		for(int i=0 ; i<circles.size() ; i++){
+			Circle* circle = circles[i];
+			int newRadius = circle->radius * 1.1;
+
+			bool changeRadius = true;
+			for(int j=0 ; j<circles.size() ; j++){
+				Circle* secondCircle =circles[j];
+				if(i==j){
+					continue;
+				}
+				if(doesCirclesIntersect(circle->x,circle->y,newRadius,secondCircle->x,secondCircle->y,secondCircle->radius)){
+					changeRadius = false;
+					break;
+				}
+			}
+			if(changeRadius){
+				circle->radius = newRadius;
+			}
+			
+		}
+	}
+}
+
+
+
+#define MIN_RADIUS 2
+void HoleFillingAddCircles(Board& board){
+
+
+
+
+	std::vector<Circle*>& circles = board.getCirclesRef();
+	/*
+	for(int i=0 ; i<circles.size() ; i++){
+		circles[i]->neighbours = vector<int>();
+	}
+	extractNeigbours(circles, board.maxDistFromNeighbour*, false);
+	*/
+	
+	int nextIndex = circles.size();
+	for(int i=0 ; i<circles.size() ; i++){
+		Circle* firstCircle = circles[i];
+		for(int j=0 ; j<firstCircle->neighbours.size() ; j++){
+			
+			Circle* secondCircle =circles[firstCircle->neighbours[j]];
+
+			float newCircleX = (secondCircle->x + firstCircle->x) / 2;
+			float newCircleY = (secondCircle->y + firstCircle->y) / 2;
+			float radius = std::max(firstCircle->radius,secondCircle->radius);
+
+			while(radius >= MIN_RADIUS){
+				bool addNewCircle = true;
+				for(int k=0 ; k<circles.size() ; k++){
+					if(doesCirclesIntersect(newCircleX,newCircleY,radius,circles[k]->x,circles[k]->y,circles[k]->radius)){
+						addNewCircle = false;
+						break;
+					}
+				}
+				if(addNewCircle){
+					int R = (firstCircle->R + secondCircle->R)/2;
+					int G = (firstCircle->G + secondCircle->G)/2;
+					int B = (firstCircle->B + secondCircle->B)/2;
+
+					Circle* newCircle = new Circle(newCircleX,newCircleY,nextIndex,radius,R,G,B);
+					circles.push_back(newCircle);
+					nextIndex++;
+				}else{
+					radius = radius / 1.2;
+					break;
+				}
+				
+	
+			}
+			
+		}
+	}
+
+	for(int i=0 ; i<circles.size() ; i++){
+		circles[i]->neighbours = std::vector<int>();
+	}
+
+	board.maxDistFromNeighbour = board.maxDistFromNeighbour / 2;
+	extractNeigbours(circles, board.maxDistFromNeighbour);
+
+	int a = 3;
+}
+

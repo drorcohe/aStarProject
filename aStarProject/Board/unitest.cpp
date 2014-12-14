@@ -58,6 +58,8 @@ int main(){
 
 	//thresholdBoard(b,50,50,250,1000,0,1000);
 	thresholdBoard(b,5,50,250,1000,0,1000);
+	HoleFillingEnlargeImages(b);
+	boardImp.openGUI("..\\resources\\shoutBoardFixed2.txt");
 	//thresholdBoard(b,4,50,0,1000,0,1000);
 	printCircles(b.getCircles(),b.imageFilePath);
 
@@ -66,7 +68,7 @@ int main(){
 	writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed2.txt");
 	cv::waitKey(0);
 	//boardImp.openGUI("..\\resources\\shoutBoardFixed2.txt");
-	//HoleFillingEnlargeImages(b);
+	
 	
 	//printBoard(b);
 	printCircles(b.getCircles(),b.imageFilePath);

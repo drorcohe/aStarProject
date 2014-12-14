@@ -27,9 +27,6 @@ cv::Mat printCircles(std::vector<Circle*> circles,std::string imPath);
 
 void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeigbour = 15, bool addOpt = true);
 
-void HoleFillingEnlargeImages(Board& board);
-
-void HoleFillingAddCircles(Board& board);
 
 bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1);
 
