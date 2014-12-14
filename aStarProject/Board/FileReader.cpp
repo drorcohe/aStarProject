@@ -26,8 +26,8 @@ void writeBoardToFile(std::vector<Circle*> circles, std::string fileName){
 }
 
 
-std::vector<Circle*> readBoardFromFile(std::string fileName){
-	std::vector<Circle*> retVec;
+void readBoardFromFile(std::string fileName,std::vector<Circle*> circles){
+	
 	
 
 	std::string line;
@@ -55,7 +55,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 			ss >> index;
 
 			Circle* nextCircle = new Circle(x,y,index,radius,R,G,B);
-			retVec.push_back(nextCircle);
+			circles.push_back(nextCircle);
 			maxCircleIndex = std::max(maxCircleIndex,index);
 
 
@@ -70,7 +70,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 		
 			int currentIndex,neighbourIndex;
 			ss >> currentIndex;
-			Circle* currentCircle = retVec[currentIndex];
+			Circle* currentCircle = circles[currentIndex];
 			ss >> temp; //ignores the ":"
 
 			int prevNeighbourIndex = -1;
@@ -87,7 +87,7 @@ std::vector<Circle*> readBoardFromFile(std::string fileName){
 
 		inputFile.close();
 	}
-	return retVec;
+
 
 
 }

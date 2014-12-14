@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include <set>
-bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList= std::set<Circle*>());
+bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList= std::set<Circle*>(), bool printRes = false);
 char latestPressedKey = -1;
 std::vector<Circle*>* gCircles;  
 cv::Mat gMat, gIm;
@@ -16,13 +16,16 @@ BoardImprover::BoardImprover(Board &board) : b(board){
 
 }
 
-bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList){
+bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, std::set<Circle*> ignoreList, bool printRes){
 	std::vector<Circle*>::iterator it;
 	for (it =circles.begin(); it != circles.end(); it++) {
 		if(ignoreList.find(*it) != ignoreList.end()){
 			continue;
 		}
 		if(doesCirclesIntersect(x,y,r,(*it)->x,(*it)->y,(*it)->radius)){
+			if(printRes){
+				printf("x:%d,y:%d,r:%d intersect with x:%d,y:%d,r:%d ",x,y,r,(*it)->x,(*it)->y,(*it)->radius);
+			}
 			return false;
 		}
 	}
@@ -85,25 +88,27 @@ Circle* findClosestCircle(std::vector<Circle*> circles, int x, int y){
 
 	}
 
+
 	return closestCircle;
 
 }
 
-#define DEFAULT_RADIUS 7
+#define DEFAULT_RADIUS 11
 static void onMouse( int event, int x, int y, int, void* )
 {
     if( event != cv::EVENT_LBUTTONDOWN )
         return;
 
-	
 	if(latestPressedKey=='a'){
 		int radius = DEFAULT_RADIUS;
-		while(!isNewCircleValidHere(*gCircles,x,y,radius) && radius > 1){
+
+		while(!isNewCircleValidHere(*gCircles,x,y,radius) && radius > 4){
 			radius--;
 		}
-		if (isNewCircleValidHere(*gCircles,x,y,radius) ){
+
+		if (isNewCircleValidHere(*gCircles,x,y,radius,std::set<Circle*>(), true) ){
 			int R = gIm.at<cv::Vec3b>(y,x)[0]; int G = gIm.at<cv::Vec3b>(y,x)[1]; int B = gIm.at<cv::Vec3b>(y,x)[2];
-			addCircle(*gCircles,x,y,radius,255,0,0);
+			addCircle(*gCircles,x,y,radius,R,G,B);
 
 		}else{
 			std::cout<<"new Circle isn't valid here"<<std::endl;
@@ -114,7 +119,7 @@ static void onMouse( int event, int x, int y, int, void* )
 			int addition = latestPressedKey=='i'? 1:-1;
 			std::set<Circle*> ignoreSet = std::set<Circle*>();
 			ignoreSet.insert(closestCircle);
-			if (!isNewCircleValidHere(*gCircles,x,y,closestCircle->radius+addition,ignoreSet) ){
+			if (!isNewCircleValidHere(*gCircles,x,y,closestCircle->radius+addition,ignoreSet,true) ){
 				std::cout<<"cant increment radius, it is too big"<<std::endl;
 			}else{
 				closestCircle->radius += addition;
@@ -180,7 +185,8 @@ void BoardImprover::fixBoard(){
 		b.getCirclesRef()[i]->index = i;
 		b.getCirclesRef()[i]->neighbours = std::vector<int>();
 	}
-	extractNeigbours(b.getCirclesRef());
+	b.maxDistFromNeighbour = 1;
+	extractNeigbours(b.getCirclesRef(),b.maxDistFromNeighbour,true);
 
 }
 
@@ -207,13 +213,13 @@ void HoleFillingEnlargeImages(Board& board){
 
 	std::vector<Circle*> circles = board.getCircles();
 	int nextIndex = circles.size() + 1;
-	float multFactor = 1.1;
+	float addFactor = 1;
 
 	for(int k=0 ; k<15 ; k++){
 
 		for(int i=0 ; i<circles.size() ; i++){
 			Circle* circle = circles[i];
-			int newRadius = circle->radius * 1.1;
+			int newRadius = circle->radius + addFactor;
 
 			bool changeRadius = true;
 			for(int j=0 ; j<circles.size() ; j++){

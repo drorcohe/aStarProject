@@ -30,7 +30,8 @@ int mainWrite(int argc, char** argv){
 int mainReadCircles(int argc, char** argv){
 	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
 	int startCircle,  endCircle;
-	std::vector<Circle*> circles = readBoardFromFile(std::string("circlesFile.txt"));
+	std::vector<Circle*> circles;
+	readBoardFromFile(std::string("circlesFile.txt"),circles);
 	//printCircles(circles,imPath);
 	printNeigbours(circles,imPath);
 	return 1;
@@ -56,16 +57,17 @@ int main(){
 	printCircles(b.getCircles(),b.imageFilePath);
 	cv::waitKey(0);
 
-	//thresholdBoard(b,50,50,250,1000,0,1000);
-	thresholdBoard(b,5,50,250,1000,0,1000);
 	HoleFillingEnlargeImages(b);
-	boardImp.openGUI("..\\resources\\shoutBoardFixed2.txt");
+	thresholdBoard(b,3,50,0,1000,0,1000);
+	thresholdBoard(b,5,50,250,1000,0,1000);
+	//HoleFillingEnlargeImages(b);
+	boardImp.openGUI("..\\resources\\shoutBoardFixed3.txt");
 	//thresholdBoard(b,4,50,0,1000,0,1000);
 	printCircles(b.getCircles(),b.imageFilePath);
 
-	boardImp.fixBoard();
+	//boardImp.fixBoard();
 	printCircles(b.getCircles(),b.imageFilePath);
-	writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed2.txt");
+	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed2.txt");
 	cv::waitKey(0);
 	//boardImp.openGUI("..\\resources\\shoutBoardFixed2.txt");
 	
