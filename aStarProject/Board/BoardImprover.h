@@ -28,4 +28,7 @@ void HoleFillingEnlargeImages(Board& board);
 void HoleFillingAddCircles(Board& board);
 
 void fixColors(Board& board);
+
+void spaceImage(Board& board);
+
 #endif

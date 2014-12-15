@@ -304,6 +304,17 @@ void HoleFillingAddCircles(Board& board){
 	int a = 3;
 }
 
+
+void spaceImage(Board& board){
+	for(int i=0 ; i<board.getCircles().size() ; i++){
+		Circle* nextCircle = board.getCircles()[i];
+		nextCircle->radius = nextCircle->radius*1.4;
+		nextCircle->x = nextCircle->x*1.4;
+		nextCircle->y = nextCircle->y*1.4;
+	}
+
+}
+
 void fixColors(Board& board){
 	for(int i=0 ; i<board.getCircles().size() ; i++){
 		Circle* nextCircle = board.getCircles()[i];

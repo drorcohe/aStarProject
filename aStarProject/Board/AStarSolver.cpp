@@ -24,6 +24,12 @@ void AStarSolver::init(Board& board, int startCircle, std::vector<int> endCircle
 	this->startCircle = startCircle;
 	this->endCircles = std::vector<int>(endCircles);
 	this->targetSpinDirections = std::vector<AStarSolver::Direction>(directions);
+
+	//sets max radius for board object
+	int maxSoFar = -1;
+	for(int i=0 ; i<board.getCircles().size() ; i++){
+		maxSoFar = std::max(maxSoFar,board.getCircles()[i]->radius);
+	}
 }
 
 int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
@@ -69,8 +75,10 @@ std::vector<int> AStarSolver::solve(){
 
 			assert(targetSpinDirections[i]!=NOT_IMPORTANT);
 
-			AStarSolver::PathType pathType = previousDirection == targetSpinDirections[i]? EVEN : ODD;
-			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],pathType,currentPath);
+			AStarSolver::PathType pathType = previousDirection == targetSpinDirections[i]? ODD : EVEN;
+			std::vector<int> invalidList = currentPath.size()>0? std::vector<int>(currentPath.begin(),currentPath.end()-1):std::vector<int>();
+			
+			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],pathType,invalidList);
 			if(bestSubPath.size()==0){
 				invalidPath = true;
 				break;
@@ -107,6 +115,9 @@ std::vector<int> AStarSolver::solve(){
 		}
 	}
 	assert(numOfFoundedTargets==endCircles.size());
+
+	std::set<int> setPath(bestPathSoFar.begin(),bestPathSoFar.end());
+	assert(setPath.size() == bestPathSoFar.size());
 #endif
 	return bestPathSoFar;
 
@@ -140,14 +151,15 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::PathTy
 	
 	while(openSet.size() > 0){
 		
-		
-		int currentCircleIndex = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
-		Circle* currentCircle = board.indToCircle[currentCircleIndex];
-		if(currentCircle == board.indToCircle[end]){
+		if(openSet.count(end) > 0){
+			Circle* currentCircle = board.indToCircle[end];
 			std::vector<int> retPath = reconstruct_path(cameFrom, end);
+			std::reverse(retPath.begin(),retPath.end());
 			return retPath;
 		}
-
+		int currentCircleIndex = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
+		Circle* currentCircle = board.indToCircle[currentCircleIndex];
+		
 
 		openSet.erase(currentCircle->index);
 		closeSet.insert(currentCircle->index);
@@ -192,9 +204,6 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::PathTy
 
 	}
 
-	if(invalidIndices.size()==0){
-		assert(0==1);
-	}
 	
 
 	return std::vector<int>();

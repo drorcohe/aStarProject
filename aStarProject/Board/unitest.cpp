@@ -27,11 +27,11 @@ int mainWrite(int argc, char** argv){
 
 }
 
-int mainReadCircles(int argc, char** argv){
-	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg";
+int mainNe(int argc, char** argv){
+	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\resources\\shout.jpg";
 	int startCircle,  endCircle;
 	std::vector<Circle*> circles;
-	readBoardFromFile(std::string("circlesFile.txt"),circles);
+	readBoardFromFile(std::string("..\\resources\\shoutBoardFixed4.txt"),circles);
 	//printCircles(circles,imPath);
 	printNeigbours(circles,imPath);
 	return 1;
@@ -46,8 +46,10 @@ int main(){
 //	HoleFillingAddCircles(b);
 
 	
-	BoardImprover boardImp(b);
-	fixColors(b);
+	/*BoardImprover boardImp(b);
+	//fixColors(b);
+	spaceImage(b);
+	thresholdBoard(b,3,50,0,1000,0,1000);
 	boardImp.openGUI("..\\resources\\shoutBoardFixed4.txt");
 	//boardImp.fixBoard();
 
@@ -81,8 +83,18 @@ int main(){
 	cv::waitKey(0);
 
 	exit(1);*/
-	cv::waitKey();
+	//cv::waitKey();
+
 	std::vector<int> endCircles = std::vector<int>();
+	endCircles.push_back(37);
+	//endCircles.push_back(409);
+
+
+	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
+	directions.push_back(AStarSolver::Direction::RIGHT);
+	//directions.push_back(AStarSolver::Direction::RIGHT	);
+
+	/*std::vector<int> endCircles = std::vector<int>();
 	endCircles.push_back(4);
 	endCircles.push_back(9);
 	endCircles.push_back(33);
@@ -91,7 +103,7 @@ int main(){
 	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
 	directions.push_back(AStarSolver::Direction::LEFT);
 	directions.push_back(AStarSolver::Direction::RIGHT);
-	directions.push_back(AStarSolver::Direction::RIGHT);
+	directions.push_back(AStarSolver::Direction::RIGHT);*/
 	//directions.push_back(AStarSolver::Direction::RIGHT);
 	AStarSolver solver;
 
@@ -113,21 +125,22 @@ void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::ve
 	for(int i=0 ; i<b.getCircles().size() ; i++ ){
 		Circle* nextCircle = b.getCircles()[i];
 		cv::Point center(nextCircle->x,nextCircle->y);
-
 		cv::Scalar scalar(255,255,255);
-		if(i == startCircle){
-			scalar = cv::Scalar(255,0,0);
-		} else if(std::find(endCircles.begin(), endCircles.end(), i) != endCircles.end() || i==endCircles[endCircles.size()-1]){
-			scalar = cv::Scalar(0,255,0);
-		}else{
-			for(int j=0 ; j<solutionPath.size() ; j++){
-				if(solutionPath[j]==i){
-					scalar = cv::Scalar(0,0,255);
-				}
-			}
-		}
-
 		cv::circle( blankMat, center, nextCircle->radius, scalar );
+
+	}
+	for(int i=0 ; i<solutionPath.size() ; i++ ){
+		Circle* nextCircle = b.indToCircle[solutionPath[i]];
+		cv::Scalar scalar(0,0,255);
+		if(solutionPath[i] == startCircle){
+			scalar = cv::Scalar(255,0,0);
+		} else if(std::find(endCircles.begin(), endCircles.end(), solutionPath[i]) != endCircles.end() || solutionPath[i]==endCircles[endCircles.size()-1]){
+			scalar = cv::Scalar(0,255,0);
+		}
+		cv::Point center(nextCircle->x,nextCircle->y);
+		cv::circle( blankMat, center, nextCircle->radius, scalar );
+		printf("next circle: %d, direction: %c \n", nextCircle->index, (i%2==0? 'R':'L'));
+		
 
 	}
 
@@ -166,7 +179,7 @@ void printNeigbours(std::vector<Circle*> circles, std::string imPath){
 			cv::Mat blankMat = cv::Mat::zeros(src.size(), src.type());
 			for(int i=0 ; i<circles.size() ; i++ ){
 				Circle* nextCircle = circles[i];
-				cv::Point center(nextCircle->y,nextCircle->x);
+				cv::Point center(nextCircle->x,nextCircle->y);
 				circle( blankMat, center, circles[i]->radius, cv::Scalar(255,255,255) );
 
 			}
@@ -174,14 +187,14 @@ void printNeigbours(std::vector<Circle*> circles, std::string imPath){
 			
 			//prints the chosen circle
 			Circle* centerCircle = circles[nextIndex];
-			cv::Point center(centerCircle->y,centerCircle->x);
+			cv::Point center(centerCircle->x,centerCircle->y);
 			circle( blankMat, center, centerCircle->radius, cv::Scalar(255,0,0) );
 
 			//prints its neighours
 			for(int i=0 ; i<centerCircle->neighbours.size() ; i++){
 
 				Circle* neighbourCircle = circles[centerCircle->neighbours[i]];
-				cv::Point center(neighbourCircle->y,neighbourCircle->x);
+				cv::Point center(neighbourCircle->x,neighbourCircle->y);
 				circle( blankMat, center, neighbourCircle->radius, cv::Scalar(0,255,0) );
 
 			}
