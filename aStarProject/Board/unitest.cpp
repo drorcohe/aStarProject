@@ -8,10 +8,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "AStarSolver.h"
 
+void printNeigboursGUI(Board & b);
 
 
-
-void printNeigbours(std::vector<Circle*> circles, std::string imPath);
+void printNeigbours(std::vector<Circle*> circles, std::string imPath, Circle* chosenCircle);
 void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles = std::vector<int>() );
 
 int mainWrite(int argc, char** argv){
@@ -21,7 +21,7 @@ int mainWrite(int argc, char** argv){
 	printCircles(circles,MAP_PARAMETER_SET.imagePath);
 
 	writeBoardToFile(circles,std::string("..\\resources\\mapBoard.txt"));
-	printNeigbours(circles,MAP_PARAMETER_SET.imagePath);
+	//printNeigbours(circles,MAP_PARAMETER_SET.imagePath);
 
 	return 1;
 
@@ -33,32 +33,35 @@ int mainNe(int argc, char** argv){
 	std::vector<Circle*> circles;
 	readBoardFromFile(std::string("..\\resources\\shoutBoardFixed4.txt"),circles);
 	//printCircles(circles,imPath);
-	printNeigbours(circles,imPath);
+	//printNeigbours(circles,imPath);
 	return 1;
 }
 
 int main(){
 	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoardFixed4.txt"),imPath, SHOUT_PARAMETER_SET.maxDistFromNeighbour);
+	b.init(std::string("..\\resources\\shoutBoardFixedLatest.txt"),imPath, 3.5);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 
 	
-	/*BoardImprover boardImp(b);
+	BoardImprover boardImp(b);
+	//printNeigboursGUI(b);
+	//boardImp.fixBoard();
+	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
 	//fixColors(b);
-	spaceImage(b);
-	thresholdBoard(b,3,50,0,1000,0,1000);
-	boardImp.openGUI("..\\resources\\shoutBoardFixed4.txt");
+	//spaceImage(b);
+	//thresholdBoard(b,3,50,0,1000,0,1000);
+	//boardImp.openGUI("..\\resources\\shoutBoardFixed6.txt");
 	//boardImp.fixBoard();
 
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixed3.txt");
 	//printCircles(circi,b.imageFilePath);
 	//cv::waitKey(0);
 
-	printCircles(b.getCircles(),b.imageFilePath);
-	cv::waitKey(0);
+	//printCircles(b.getCircles(),b.imageFilePath);
+	//cv::waitKey(0);
 	/*cv::waitKey(0);
 
 	HoleFillingEnlargeImages(b);
@@ -86,11 +89,13 @@ int main(){
 	//cv::waitKey();
 
 	std::vector<int> endCircles = std::vector<int>();
+	//endCircles.push_back(13);
 	endCircles.push_back(37);
 	//endCircles.push_back(409);
 
 
 	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
+	//directions.push_back(AStarSolver::Direction::LEFT);
 	directions.push_back(AStarSolver::Direction::RIGHT);
 	//directions.push_back(AStarSolver::Direction::RIGHT	);
 
@@ -148,65 +153,66 @@ void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::ve
 	cv::waitKey(0.5);
 }
 
+std::vector<Circle*> gCircles;
+std::string gImPath;
+static void onMouse( int event, int x, int y, int, void* )
+	{
+    if( event != cv::EVENT_LBUTTONDOWN )
+        return;
 
-void printNeigbours(std::vector<Circle*> circles, std::string imPath){
+	Circle* closestCircle = findClosestCircle(gCircles,x,y);
+	printNeigbours(gCircles,gImPath,closestCircle);
+	cv::setMouseCallback(std::string("neighbours Demo"), onMouse);
+}
+
+
+void printNeigboursGUI(Board & b){
+
+	gImPath = std::string(b.imageFilePath);
+	gCircles = b.getCircles();
+	printNeigbours(gCircles, b.imageFilePath,NULL);
+	cv::setMouseCallback(std::string("neighbours Demo"), onMouse);
+	cv::waitKey();
+	
+}
+
+void printNeigbours(std::vector<Circle*> circles, std::string imPath, Circle* chosenCircle){
 
 	cv::Mat src = cv::imread( imPath, 1 );
 	if( !src.data )
 	 { exit(1); }
-
-	cv::Mat blankMat;
-
-	int maxIndex = -1;
-	int minIndex = 1000000;
-
-
-
-	for(int i=0 ; i< circles.size() ; i++){
-		minIndex = std::min(minIndex,circles[i]->index);
-		maxIndex = std::max(maxIndex,circles[i]->index);
-	}
-
-	std::cout<<"min index is "<<minIndex<<", max index is: " << maxIndex <<std::endl;
 	
-	while(0==0){
-		std::cout<<"choose index, or press any other key to exit"<<std::endl;
-		int nextIndex;
-		std::cin>>nextIndex;
-		if(nextIndex >= minIndex && minIndex <= maxIndex){
-			cv::destroyAllWindows();
-			//prints all the other circles
-			cv::Mat blankMat = cv::Mat::zeros(src.size(), src.type());
-			for(int i=0 ; i<circles.size() ; i++ ){
-				Circle* nextCircle = circles[i];
-				cv::Point center(nextCircle->x,nextCircle->y);
-				circle( blankMat, center, circles[i]->radius, cv::Scalar(255,255,255) );
+		
+	//prints all the other circles
+	cv::Mat blankMat = cv::Mat::zeros(src.size(), src.type());
+	for(int i=0 ; i<circles.size() ; i++ ){
+		Circle* nextCircle = circles[i];
+		cv::Point center(nextCircle->x,nextCircle->y);
+		circle( blankMat, center, circles[i]->radius, cv::Scalar(255,255,255) );
 
-			}
-
-			
-			//prints the chosen circle
-			Circle* centerCircle = circles[nextIndex];
-			cv::Point center(centerCircle->x,centerCircle->y);
-			circle( blankMat, center, centerCircle->radius, cv::Scalar(255,0,0) );
-
-			//prints its neighours
-			for(int i=0 ; i<centerCircle->neighbours.size() ; i++){
-
-				Circle* neighbourCircle = circles[centerCircle->neighbours[i]];
-				cv::Point center(neighbourCircle->x,neighbourCircle->y);
-				circle( blankMat, center, neighbourCircle->radius, cv::Scalar(0,255,0) );
-
-			}
-
-			cv::imshow( "neighbours Demo", blankMat );
-			cv::waitKey(0.5);
-			
-		}
-		else{
-			break;
-		}
 	}
 
+	if(!chosenCircle == NULL){
+		printf("chosen circle: %d, location: x=%d, y=%d, rad=%d\n", chosenCircle->index, chosenCircle->x, chosenCircle->y, chosenCircle->radius);
+		//prints the chosen circle
+		cv::Point center(chosenCircle->x,chosenCircle->y);
+		circle( blankMat, center, chosenCircle->radius, cv::Scalar(255,0,0) );
+
+		//prints its neighours
+		for(int i=0 ; i<chosenCircle->neighbours.size() ; i++){
+
+			Circle* neighbourCircle = circles[chosenCircle->neighbours[i]];
+			cv::Point center(neighbourCircle->x,neighbourCircle->y);
+			circle( blankMat, center, neighbourCircle->radius, cv::Scalar(0,255,0) );
+			printf("chosen neigbour: %d, location: x=%d, y=%d, rad=%d\n", neighbourCircle->index, neighbourCircle->x, neighbourCircle->y, neighbourCircle->radius);
+		}
+	}
+			
+	
+
+	cv::imshow( "neighbours Demo", blankMat );
+
+			
+	
 
 }

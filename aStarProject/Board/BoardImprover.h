@@ -31,4 +31,6 @@ void fixColors(Board& board);
 
 void spaceImage(Board& board);
 
+Circle* findClosestCircle(std::vector<Circle*> circles, int x, int y);
+
 #endif

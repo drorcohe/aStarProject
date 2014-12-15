@@ -10,7 +10,7 @@ bool isNewCircleValidHere(std::vector<Circle*>& circles, int x, int y, int r, st
 char latestPressedKey = -1;
 std::vector<Circle*>* gCircles;  
 cv::Mat gMat, gIm;
-
+int gR=125; int gB=125; int gG = 125;
 BoardImprover::BoardImprover(Board &board) : b(board){
 	im = cv::imread( board.imageFilePath, 1 );
 
@@ -127,6 +127,39 @@ static void onMouse( int event, int x, int y, int, void* )
 		} else if(latestPressedKey=='d'){
 			removeCircle(*gCircles,closestCircle);
 			std::cout<<"removed circle: x: "<<closestCircle->x <<" y: "<<closestCircle->y <<" with radius " <<  closestCircle->radius << std::endl;
+		}else if(latestPressedKey=='c'){
+			gR = closestCircle->R;
+			gG = closestCircle->G;
+			gB = closestCircle->B;
+			printf("changed chosen color to: %d,%d,%d",gR,gG,gB);
+			
+		} else if(latestPressedKey=='v'){
+			closestCircle->R = gR;
+			closestCircle->G = gG;
+			closestCircle->B = gB;
+			printf("changed chosen color to: %d,%d,%d",gR,gG,gB);
+			
+		}else if((latestPressedKey=='o' || latestPressedKey=='l' || latestPressedKey=='k' || latestPressedKey==';' )){
+			std::set<Circle*> ignoreSet = std::set<Circle*>();
+			ignoreSet.insert(closestCircle);
+
+			int xAdd=0; int yAdd = 0;
+			if(latestPressedKey=='k') //left
+				xAdd--;
+			else if(latestPressedKey=='o') //up
+				yAdd--;
+			else if(latestPressedKey==';') //right 
+				xAdd++;
+			else if(latestPressedKey=='l') //down 
+				yAdd++;
+
+			if (isNewCircleValidHere(*gCircles,closestCircle->x,closestCircle->y,closestCircle->radius,ignoreSet, true) ){
+				int R = gIm.at<cv::Vec3b>(y,x)[0]; int G = gIm.at<cv::Vec3b>(y,x)[1]; int B = gIm.at<cv::Vec3b>(y,x)[2];
+				closestCircle->x += xAdd;
+				closestCircle->y += yAdd;
+			}else{
+				std::cout<<"cand change circle location, it's not valid here"<<std::endl;
+			}
 		}
 
 	}
@@ -147,12 +180,12 @@ void BoardImprover::openGUI(std::string newFileName){
 	gIm = im.clone();
 	gMat = reRenderCircles(*gCircles,gIm.size(),gIm.type());
 	cv::setMouseCallback(std::string("circles rendering"), onMouse);
-	std::cout<<"press ESC to exit \n d to delete circle \n a to add circle \n i to increment radius \n j to decrement radius \n r to render again here \n s  to save\n  h for hole filling \n";
+	std::cout<<"press ESC to exit \n d to delete circle \n a to add circle \n i to increment radius \n j to decrement radius \n r to render again here \n s  to save\n  h for hole filling \n( o k l ;) for changing direction \nc for choose color \nv for applying color \n";
 
 	while(1==1){
 		char newKey = cv::waitKey();
 		if(latestPressedKey != newKey){
-			if(newKey=='d' || newKey=='a' || newKey=='i' || newKey=='j' || newKey=='s' || newKey=='r'|| newKey==27){
+			if(newKey=='d' || newKey=='a' || newKey=='i' || newKey=='j' || newKey=='s' || newKey=='r'|| newKey==27 || (newKey=='o' || newKey=='l' || newKey=='k' || newKey==';'  || newKey=='v' || newKey=='c' )){
 				std::cout<<"switched to operation: "<< std::string(1,newKey)<<std::endl;
 				latestPressedKey = newKey;
 			}
@@ -186,7 +219,7 @@ void BoardImprover::fixBoard(){
 		b.getCirclesRef()[i]->neighbours = std::vector<int>();
 	}
 
-	extractNeigbours(b.getCirclesRef(),b.maxDistFromNeighbour,true);
+	extractNeigbours(b.getCirclesRef(),b.maxDistFromNeighbour,false);
 
 }
 

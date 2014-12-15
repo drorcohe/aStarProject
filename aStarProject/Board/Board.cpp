@@ -15,7 +15,7 @@ Circle::Circle(int x_p, int y_p, int index_p, int radius_p, float R_p, float G_p
 }
 
 float Circle::dist(Circle circle1, Circle circle2){
-	if((circle1.x==circle2.x) && (circle1.y = circle2.y)){
+	if((circle1.x==circle2.x) && (circle1.y == circle2.y)){
 		return 0;
 	}
 	float retVal = sqrt((circle1.x-circle2.x)*(circle1.x-circle2.x) + (circle1.y-circle2.y)*(circle1.y-circle2.y))-circle1.radius-circle2.radius;

@@ -190,6 +190,9 @@ void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbo
 	//first iteration - each pair of circles is labled as a pair of neighbours according to their distance only
 	for(int i=0 ; i<circleVect.size() ; i++){
 		for(int j=i+1 ; j<circleVect.size() ; j++){
+			if(i==16 && j==120){
+				int a =3;
+			}
 			if( Circle::dist(*circleVect[i],*circleVect[j]) < maxDistFromNeighbour){
 				circleVect[i]->neighbours.push_back(circleVect[j]->index);
 				circleVect[j]->neighbours.push_back(circleVect[i]->index);
@@ -225,9 +228,7 @@ void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbo
 					
 					//erases neighbourCandidate1 only if it's stands between the original circle and the second candidate,  
 					// and also only if its distance from the original circle is larger
-					if(i==99){
-						int a =33;
-					}
+
 					if(doesCircleStandsInTheWay(originalCircle,neighbourCandidate1,neighbourCandidate2) && distFrom1 > distFrom2){
 						originalCircle->neighbours.erase(originalCircle->neighbours.begin()+j);
 						j--;
