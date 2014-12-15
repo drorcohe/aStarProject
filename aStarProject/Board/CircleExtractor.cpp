@@ -9,11 +9,11 @@
 using namespace cv;
 bool doesCirclesIntersect(float x0, float y0, float r0, float x1, float y1, float r1);
 bool doesCircleStandsInTheWay(Circle* first, Circle* second, Circle* third);
-extern ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17,15};
-extern ParametersSet DEER_PARAMETER_SET = {std::string("DEER"),std::string("..\\resources\\deer.jpg"),1, 6 ,2,7,2,17,3};
+extern ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\heart.jpg"),1, 6 ,2,13,2,17,3};
+extern ParametersSet DEER_PARAMETER_SET = {std::string("DEER"),std::string("..\\resources\\deerLatest.jpg"),1, 6 ,2,7,2,17,3};
 extern ParametersSet SHOUT_PARAMETER_SET = {std::string("SHOUT"),std::string("..\\resources\\shout.jpg"),1, 6 ,2,6,1,25,3};
-extern ParametersSet MERLIN_PARAMETER_SET = {std::string("MERLIN"),std::string("..\\resources\\merlin.jpg"),1, 6 ,2,6,1,25,10};
-extern ParametersSet MAP_PARAMETER_SET = {std::string("MAP"),std::string("..\\resources\\map2.jpg"),1, 6 ,2,8,3,0.1,5};
+extern ParametersSet MERLIN_PARAMETER_SET = {std::string("MERLIN"),std::string("..\\resources\\merlin.jpg"),1, 6 ,2,6,1,25,3};
+extern ParametersSet MAP_PARAMETER_SET = {std::string("MAP"),std::string("..\\resources\\map2.jpg"),1, 6 ,2,8,3,0.1,3};
 
 
 //first image: C:\\Users\\drorcohe\\aStarProject\\aStarProject\\heart.jpg

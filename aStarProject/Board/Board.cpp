@@ -1,4 +1,4 @@
-
+#include <cstring>
 #include <set>
 #include <math.h>
 #include "Board.h"

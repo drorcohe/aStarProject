@@ -10,20 +10,24 @@
 #include <algorithm>
 
 
-void AStarSolver::init(Board& board, int startCircle, int endCircle,  AStarSolver::Direction direction){
+
+
+
+void AStarSolver::init(Board& board, int startCircle, int endCircle,  Direction direction){
+
 	this->board = board;
 	this->startCircle = startCircle;
 	this->endCircles = std::vector<int>();
 	this->endCircles.push_back(endCircle);
-	this->targetSpinDirections = std::vector<AStarSolver::Direction>();
+	this->targetSpinDirections = std::vector<Direction>();
 	this->targetSpinDirections.push_back(direction);
 }
 
-void AStarSolver::init(Board& board, int startCircle, std::vector<int> endCircles, std::vector<AStarSolver::Direction> directions){
+void AStarSolver::init(Board& board, int startCircle, std::vector<int> endCircles, std::vector<Direction> directions){
 	this->board = board;
 	this->startCircle = startCircle;
 	this->endCircles = std::vector<int>(endCircles);
-	this->targetSpinDirections = std::vector<AStarSolver::Direction>(directions);
+	this->targetSpinDirections = std::vector<Direction>(directions);
 
 	//sets max radius for board object
 	int maxSoFar = -1;
@@ -32,15 +36,17 @@ void AStarSolver::init(Board& board, int startCircle, std::vector<int> endCircle
 	}
 }
 
-int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
+AStarNode findMinIndexFromOpenSet(std::set<AStarNode> openSet, std::map<AStarNode,float> f_score){
 	float minFScore = 100000000;
-	int minIndex = -1;
+	AStarNode minIndex;
 
-	std::set<int>::iterator it;
+	std::set<AStarNode>::iterator it;
+	
 	for (it = openSet.begin(); it != openSet.end(); ++it){
-		if (f_score[*it] < minFScore){
-			minIndex = *it;
-			minFScore = f_score[*it];
+		AStarNode nextNode = *it;
+		if (f_score[nextNode] < minFScore){
+			minIndex = nextNode;
+			minFScore = f_score[nextNode];
 		}
 	}
 	return minIndex;
@@ -49,14 +55,16 @@ int findMinIndexFromOpenSet(std::set<int> openSet, std::vector<float> f_score){
 
 
 
-std::vector<int> reconstruct_path(std::vector<int> cameFrom,int current){
+std::vector<int> reconstruct_path(std::map<AStarNode,AStarNode> cameFrom,AStarNode start, AStarNode end){
 	std::vector<int> path;
-	while(current != -1){
-		path.push_back(current);
+	AStarNode current = end;
+	while(current.circleIndex != start.circleIndex){
+		path.push_back(current.circleIndex);
 		current = cameFrom.at(current);
 	}
+	path.push_back(start.circleIndex);
 
-	return path; //TODO - reverse the order
+	return path;
 }
 
 std::vector<int> AStarSolver::solve(){
@@ -67,7 +75,7 @@ std::vector<int> AStarSolver::solve(){
 	
 	do {
 		bool invalidPath = false;
-		AStarSolver::Direction previousDirection = RIGHT; //first circle always goes right
+		Direction previousDirection = RIGHT; //first circle always goes right
 		std::vector<int> currentPath = std::vector<int>();
 		int subPathStartCircle = startCircle;
 
@@ -75,18 +83,26 @@ std::vector<int> AStarSolver::solve(){
 
 			assert(targetSpinDirections[i]!=NOT_IMPORTANT);
 
-			AStarSolver::PathType pathType = previousDirection == targetSpinDirections[i]? ODD : EVEN;
-			std::vector<int> invalidList = currentPath.size()>0? std::vector<int>(currentPath.begin(),currentPath.end()-1):std::vector<int>();
-			
-			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],pathType,invalidList);
+			std::vector<AStarNode> visitedNodes;
+
+			if(currentPath.size() > 0){
+				for(int i=0 ; i<currentPath.size() ; i++){
+					AStarNode nextNode;
+					nextNode.circleIndex = currentPath[i];
+					nextNode.dir = RIGHT;
+					visitedNodes.push_back(nextNode);
+					AStarNode nextNode2 = nextNode;
+					nextNode2.dir = LEFT;
+					visitedNodes.push_back(nextNode2);
+				}
+				
+			}
+			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],previousDirection,targetSpinDirections[i],visitedNodes);
 			if(bestSubPath.size()==0){
 				invalidPath = true;
 				break;
 			}
 			currentPath.insert(currentPath.end(),bestSubPath.begin(),bestSubPath.end()-1);
-
-			assert(bestSubPath.size() > 0 && ((bestSubPath.size()%2 == 0 && pathType==EVEN) ||
-				(bestSubPath.size()%2 == 1 && pathType==ODD) || pathType==TYPE_NOT_IMPORTANT));
 
 			subPathStartCircle = endCircles[i];
 			previousDirection = targetSpinDirections[i];
@@ -123,83 +139,75 @@ std::vector<int> AStarSolver::solve(){
 
 }
 
-std::vector<int> AStarSolver::aStarSearch(int start,int end, AStarSolver::PathType pathType, std::vector<int> invalidIndices){
+
+std::vector<int> AStarSolver::aStarSearch(int start,int end, Direction directionStart,Direction directionEnd , std::vector<AStarNode> visitedNodes){
 
 	std::vector<Circle*> circles = board.getCircles();
+	std::set<AStarNode> closeSet; // The set of nodes already evaluated.
+	closeSet.insert(visitedNodes.begin(),visitedNodes.end());
 
-	std::set<int> closeSet; // The set of nodes already evaluated.
-
+	AStarNode endNode = {end,directionEnd};
 	 // The set of tentative nodes to be evaluated, initially containing the start node
 	//std::priority_queue<int, std::vector<int>, std::greater<int>> openSetQueue;
-	std::set<int> openSet;
-	openSet.insert(start);
-	
+	std::set<AStarNode> openSet;
 
-	std::vector<int> cameFrom(circles.size());  ; //a map of navigated nodes
-	for(int i=0 ; i< circles.size() ; i++){
-		cameFrom[i] = -1;
-	}
-
-	std::vector<float> g_score(circles.size());  
-	g_score[start] = 0; // Cost from start along best known path.
-	//std::vector<float> tenative_g_score(board.size()); // Cost from start along best known path.
-	 
+	AStarNode startNode = {start,directionStart};
+	openSet.insert(startNode);
 	
+	std::map<AStarNode,AStarNode> cameFrom; //a map of navigated nodes
+	
+	std::map<AStarNode,float> g_score;  
+	g_score.insert(std::pair<AStarNode,int>(startNode,0)); // Cost from start along best known path.
+
 	//Estimated total cost from start to goal through y.
-	std::vector<float> f_score(circles.size());  // Cost from start along best known path.
-	f_score[start] = g_score[start] + getHeuristic(board.indToCircle[start],end);
+	std::map<AStarNode,float> f_score;   // Cost from start along best known path.
+	f_score.insert(std::pair<AStarNode,int>(startNode,g_score[startNode] + getHeuristic(board.indToCircle[start],end)));
 	
 	while(openSet.size() > 0){
 		
-		if(openSet.count(end) > 0){
+		if(openSet.count(endNode) > 0){
 			Circle* currentCircle = board.indToCircle[end];
-			std::vector<int> retPath = reconstruct_path(cameFrom, end);
+			std::vector<int> retPath = reconstruct_path(cameFrom, startNode, endNode);
 			std::reverse(retPath.begin(),retPath.end());
 			return retPath;
 		}
-		int currentCircleIndex = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
-		Circle* currentCircle = board.indToCircle[currentCircleIndex];
+		AStarNode currentCircleNode = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
+		Circle* currentCircle = board.indToCircle[currentCircleNode.circleIndex];
 		
+		if(currentCircleNode.circleIndex==455){
+			int b =2;
+		}
 
-		openSet.erase(currentCircle->index);
-		closeSet.insert(currentCircle->index);
+		openSet.erase(currentCircleNode);
+		closeSet.insert(currentCircleNode);
+
 
 		for(std::vector<int>::iterator neighbour = currentCircle->neighbours.begin(); neighbour != currentCircle->neighbours.end(); ++neighbour) {
 			//if the neighbour is already in the close set - continue
-			if(closeSet.count(*neighbour)!=0){
+			
+			Circle* neigbourCircle = board.indToCircle[*neighbour];
+			AStarNode neighbourNode = {neigbourCircle->index,(currentCircleNode.dir==LEFT? RIGHT:LEFT)};
+			if(closeSet.count(neighbourNode)!=0){
 				continue;
 			}
-			Circle* neigbourCircle = board.indToCircle[*neighbour];
+
 
 			//if this is the endCircle - checks if out path is even or odd before continues.
-			std::vector<int> pathSoFar = reconstruct_path(cameFrom, currentCircle->index);
-			if(neigbourCircle->index==end && pathType!=NOT_IMPORTANT){
-				if((pathSoFar.size() % 2 == 0 && pathType==EVEN) || (pathSoFar.size() % 2 == 1 && pathType==ODD) ){
-					continue;
-				}
-			}
-
-			//if we are not allowed to go through this circle - continue regularly
-			bool isInvalidNeigbour = false;
-			for(int t=0 ; t< invalidIndices.size() ;t++){
-				isInvalidNeigbour |= (invalidIndices[t]==neigbourCircle->index);
-			}
-			if(isInvalidNeigbour){
+			if(neighbourNode.circleIndex==end && neighbourNode.dir!=directionEnd ){
 				continue;
+			}		
+
+
+			float tentative_g_score = g_score[currentCircleNode] + 1;
+			if(openSet.count(neighbourNode)==0 || tentative_g_score < g_score[neighbourNode]){
+				cameFrom[neighbourNode] = currentCircleNode;
+				g_score[neighbourNode] = tentative_g_score;
+				f_score[neighbourNode] = g_score[neighbourNode] + getHeuristic(neigbourCircle, end);
+				if(openSet.count(neighbourNode)==0){
+					openSet.insert(neighbourNode);
+				}
 			}
 			
-
-
-			float tentative_g_score = g_score[currentCircleIndex] + 1;
-			if(openSet.count(*neighbour)==0 || tentative_g_score < g_score[*neighbour]){
-				cameFrom[*neighbour] = currentCircle->index;
-				g_score[*neighbour] = tentative_g_score;
-				f_score[*neighbour] = g_score[*neighbour] + getHeuristic(neigbourCircle, end);
-				if(openSet.count(*neighbour)==0){
-					openSet.insert(*neighbour);
-				}
-			}
-
 		}
 
 	}

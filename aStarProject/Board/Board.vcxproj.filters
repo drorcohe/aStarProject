@@ -41,13 +41,13 @@
     <ClCompile Include="CircleExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unitest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AStarSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BoardImprover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unitest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

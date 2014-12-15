@@ -47,6 +47,8 @@ int main(){
 
 	
 	BoardImprover boardImp(b);
+	spaceImage(b);
+	boardImp.openGUI("..\\resources\\shoutBoardFixedLatest2.txt");
 	//printNeigboursGUI(b);
 	//boardImp.fixBoard();
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
@@ -90,14 +92,15 @@ int main(){
 
 	std::vector<int> endCircles = std::vector<int>();
 	//endCircles.push_back(13);
-	endCircles.push_back(37);
-	//endCircles.push_back(409);
+	endCircles.push_back(15);
+	endCircles.push_back(81);
+	endCircles.push_back(500);
 
 
-	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
-	//directions.push_back(AStarSolver::Direction::LEFT);
-	directions.push_back(AStarSolver::Direction::RIGHT);
-	//directions.push_back(AStarSolver::Direction::RIGHT	);
+	std::vector<Direction> directions = std::vector<Direction>();
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::RIGHT	);
 
 	/*std::vector<int> endCircles = std::vector<int>();
 	endCircles.push_back(4);
@@ -105,11 +108,11 @@ int main(){
 	endCircles.push_back(33);
 	//endCircles.push_back(90);
 
-	std::vector<AStarSolver::Direction> directions = std::vector<AStarSolver::Direction>();
-	directions.push_back(AStarSolver::Direction::LEFT);
-	directions.push_back(AStarSolver::Direction::RIGHT);
-	directions.push_back(AStarSolver::Direction::RIGHT);*/
-	//directions.push_back(AStarSolver::Direction::RIGHT);
+	std::vector<Direction> directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::RIGHT);*/
+	//directions.push_back(Direction::RIGHT);
 	AStarSolver solver;
 
 
