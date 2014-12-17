@@ -40,16 +40,16 @@ int mainNe(int argc, char** argv){
 int main(){
 	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoardFixedLatest.txt"),imPath, 3.5);
+	b.init(std::string("..\\resources\\shoutBoardFixedLatest2.txt"),imPath, 3.5);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 
 	
 	BoardImprover boardImp(b);
-	spaceImage(b);
-	boardImp.openGUI("..\\resources\\shoutBoardFixedLatest2.txt");
-	//printNeigboursGUI(b);
+	//spaceImage(b);
+	//boardImp.openGUI("..\\resources\\shoutBoardFixedLatest2.txt");
+	printNeigboursGUI(b);
 	//boardImp.fixBoard();
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
 	//fixColors(b);
