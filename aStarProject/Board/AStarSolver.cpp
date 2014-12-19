@@ -68,6 +68,12 @@ std::vector<int> reconstruct_path(std::map<AStarNode,AStarNode> cameFrom,AStarNo
 }
 
 std::vector<int> AStarSolver::solve(){
+
+	std::map<int,Direction> endNodeToDirection;
+	for(int i=0 ; i<endCircles.size() ; i++){
+		endNodeToDirection.insert(std::pair<int,Direction>(endCircles[i],targetSpinDirections[i]));
+
+	}
 	std::sort (endCircles.begin(),endCircles.end());
 
 	int bestPath  = INT_MAX;
@@ -97,7 +103,7 @@ std::vector<int> AStarSolver::solve(){
 				}
 				
 			}
-			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],previousDirection,targetSpinDirections[i],visitedNodes);
+			std::vector<int> bestSubPath = aStarSearch(subPathStartCircle, endCircles[i],previousDirection,endNodeToDirection[endCircles[i]],visitedNodes);
 			if(bestSubPath.size()==0){
 				invalidPath = true;
 				break;
@@ -105,7 +111,7 @@ std::vector<int> AStarSolver::solve(){
 			currentPath.insert(currentPath.end(),bestSubPath.begin(),bestSubPath.end()-1);
 
 			subPathStartCircle = endCircles[i];
-			previousDirection = targetSpinDirections[i];
+			previousDirection = endNodeToDirection[endCircles[i]];
 		}
 
 		if(invalidPath){
@@ -116,6 +122,8 @@ std::vector<int> AStarSolver::solve(){
 			bestPathSoFar = currentPath;
 			bestPath = currentPath.size();
 		}
+
+		
 	} while ( std::next_permutation(endCircles.begin(),endCircles.end()) );
 
 
