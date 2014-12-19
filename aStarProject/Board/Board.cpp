@@ -65,6 +65,8 @@ void Board::destroy(){
 	for(int i=0 ; i<circles.size() ; i++){
 		delete circles[i];
 	}
+	indToCircle = std::map<int,Circle*>();
+	circles = std::vector<Circle*>();
 
 }
 
