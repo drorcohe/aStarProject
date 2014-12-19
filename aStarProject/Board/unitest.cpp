@@ -7,7 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "AStarSolver.h"
-
+bool testSuggestions();
 void printNeigboursGUI(Board & b);
 
 
@@ -38,18 +38,21 @@ int mainNe(int argc, char** argv){
 }
 
 int main(){
-	std::string imPath = SHOUT_PARAMETER_SET.imagePath;
+	testSuggestions();
+	std::string imPath = HEART_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\shoutBoardFixedLatest2.txt"),imPath, 3.5);
+	b.init(std::string("..\\resources\\mapBoard.txt"),imPath);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 
 	
 	BoardImprover boardImp(b);
+	
 	//spaceImage(b);
-	//boardImp.openGUI("..\\resources\\shoutBoardFixedLatest2.txt");
-	printNeigboursGUI(b);
+	//thresholdBoard(b,4,1000,0,10000,0,10000);
+	//boardImp.openGUI("..\\resources\\heartBoardUpdated.txt");
+	//printNeigboursGUI(b);
 	//boardImp.fixBoard();
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
 	//fixColors(b);
@@ -89,19 +92,16 @@ int main(){
 
 	exit(1);*/
 	//cv::waitKey();
-
+	printNeigboursGUI(b);
 	std::vector<int> endCircles = std::vector<int>();
-	//endCircles.push_back(13);
-	endCircles.push_back(15);
-	endCircles.push_back(81);
-	endCircles.push_back(500);
-
+	endCircles.push_back(49);
+	endCircles.push_back(36);
 
 	std::vector<Direction> directions = std::vector<Direction>();
-	directions.push_back(Direction::RIGHT);
-	directions.push_back(Direction::RIGHT);
-	directions.push_back(Direction::RIGHT	);
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::LEFT);
 
+	
 	/*std::vector<int> endCircles = std::vector<int>();
 	endCircles.push_back(4);
 	endCircles.push_back(9);
@@ -117,11 +117,164 @@ int main(){
 
 
 
-	solver.init(b,1,endCircles,directions);
+	solver.init(b,38,endCircles,directions);
 	std::vector<int> solutionPath = solver.solve();
 	printBoard(b,solutionPath,1,endCircles); 
 	return -1;
 }
+
+bool testDir(std::vector<int> solutionPath, std::vector<int> endCircles, std::vector<Direction> wantedDirections){
+	bool pass = true;
+	int numOfFoundTargets = 0;
+	for(int i=0 ; i<solutionPath.size() ; i++){
+		for(int j=0 ; j<wantedDirections.size() ;j++){
+			if(solutionPath[i]==endCircles[j]){
+				numOfFoundTargets++;
+				if(!((wantedDirections[j]==RIGHT && i%2==0) || (wantedDirections[j]==LEFT && i%2==1))){
+					pass = false;
+				}
+				
+			}
+		}
+	}
+
+	if(numOfFoundTargets!=endCircles.size())
+		return false;
+	else
+		return pass;
+
+
+
+}
+bool testSuggestions(){
+	AStarSolver solver;
+	std::string imPath;
+	std::vector<int> endCircles, solutionPath;
+	std::vector<Direction> directions;
+	Board b;
+	imPath = SHOUT_PARAMETER_SET.imagePath;
+	b.init(std::string("..\\resources\\finalBoard\\shoutBoard.txt"),imPath);
+	endCircles = std::vector<int>();
+	endCircles.push_back(4);
+	endCircles.push_back(33);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::RIGHT);
+
+	solver.init(b,1,endCircles,directions);
+	solutionPath = solver.solve();
+
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(2);
+	endCircles.push_back(247);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::RIGHT);
+
+	solver.init(b,10,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(356);
+	endCircles.push_back(15);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::RIGHT);
+
+	solver.init(b,442,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+	b.destroy();
+	
+
+
+
+
+	imPath = DEER_PARAMETER_SET.imagePath;
+	b.init(std::string("..\\resources\\finalBoard\\deerBoard.txt"),imPath);
+	endCircles = std::vector<int>();
+	endCircles.push_back(191);
+	endCircles.push_back(2);
+
+	 directions = std::vector<Direction>();
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::LEFT);
+	solver.init(b,18,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(303);
+	endCircles.push_back(2);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::LEFT);
+	solver.init(b,118,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+	b.destroy();
+
+	
+
+	imPath = HEART_PARAMETER_SET.imagePath;
+	b.init(std::string("..\\resources\\finalBoard\\heartBoard.txt"),imPath);
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(7);
+	endCircles.push_back(2);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::RIGHT);
+	directions.push_back(Direction::RIGHT);
+	solver.init(b,98,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(49);
+	endCircles.push_back(36);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::RIGHT);
+	solver.init(b,38,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+	b.destroy();
+
+
+	printf("PASSED!");
+	int a;
+	std::cin>>a;
+
+
+
+}
+
+
 
 
 void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles ){
