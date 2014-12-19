@@ -33,7 +33,7 @@ class Board{
 public:
 
 
-	void init(std::string boardPath,std::string imagePath, float maxDistFromNeighbour=15);
+	void init(std::string boardPath,std::string imagePath, float maxDistFromNeighbour=3.5);
 	void destroy();
 	std::vector<Circle*> getCircles(){ return circles;};	
 	std::vector<Circle*>& getCirclesRef(){ return circles;};
