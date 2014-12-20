@@ -12,7 +12,7 @@ bool doesCircleStandsInTheWay(Circle* first, Circle* second, Circle* third);
 extern ParametersSet HEART_PARAMETER_SET = {std::string("HEART"),std::string("..\\resources\\finalBoard\\heart.jpg"),1, 6 ,2,13,2,17,3};
 extern ParametersSet DEER_PARAMETER_SET = {std::string("DEER"),std::string("..\\resources\\finalBoard\\deerBoard.jpg"),1, 6 ,2,7,2,17,3};
 extern ParametersSet SHOUT_PARAMETER_SET = {std::string("SHOUT"),std::string("..\\resources\\finalBoard\\shoutBoard.jpg"),1, 6 ,2,6,1,25,3};
-extern ParametersSet MERLIN_PARAMETER_SET = {std::string("MERLIN"),std::string("..\\resources\\merlin.jpg"),1, 6 ,2,6,1,25,3};
+extern ParametersSet MERLIN_PARAMETER_SET = {std::string("MERLIN"),std::string("..\\resources\\merlinbig.jpg"),1, 6 ,2,6,1,25,3};
 extern ParametersSet MAP_PARAMETER_SET = {std::string("MAP"),std::string("..\\resources\\map2.jpg"),1, 6 ,2,8,3,0.1,3};
 
 
@@ -189,9 +189,12 @@ void extractNeigbours(std::vector<Circle*> &circleVect, float maxDistFromNeighbo
 
 	//first iteration - each pair of circles is labled as a pair of neighbours according to their distance only
 	for(int i=0 ; i<circleVect.size() ; i++){
+		if(circleVect[i]->radius < 4){
+			continue;
+		}
 		for(int j=i+1 ; j<circleVect.size() ; j++){
-			if(i==16 && j==120){
-				int a =3;
+			if(circleVect[j]->radius < 4){
+				continue;
 			}
 			if( Circle::dist(*circleVect[i],*circleVect[j]) < maxDistFromNeighbour){
 				circleVect[i]->neighbours.push_back(circleVect[j]->index);

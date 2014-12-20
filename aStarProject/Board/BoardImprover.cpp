@@ -108,6 +108,9 @@ static void onMouse( int event, int x, int y, int, void* )
 
 		if (isNewCircleValidHere(*gCircles,x,y,radius,std::set<Circle*>(), true) ){
 			int R = gIm.at<cv::Vec3b>(y,x)[0]; int G = gIm.at<cv::Vec3b>(y,x)[1]; int B = gIm.at<cv::Vec3b>(y,x)[2];
+			if(abs(R+G+B<50)){
+				R = 0; G=255; B=0;
+			}
 			addCircle(*gCircles,x,y,radius,R,G,B);
 
 		}else{
@@ -359,9 +362,9 @@ void fixColors(Board& board){
 				newG = newG + neigbour->G;
 				newB = newB + neigbour->B;
 			}
-			nextCircle->R = newR / nextCircle->neighbours.size();
-			nextCircle->G = newG / nextCircle->neighbours.size();
-			nextCircle->B = newB / nextCircle->neighbours.size();
+			nextCircle->R = 0; //newR / nextCircle->neighbours.size();
+			nextCircle->G = 255;// newG / nextCircle->neighbours.size();
+			nextCircle->B = 0;//newB / nextCircle->neighbours.size();
 			if(abs(nextCircle->R - nextCircle->G) < 30 && + abs(nextCircle->R - nextCircle->G) < 30 && abs(nextCircle->R - nextCircle->G) < 30){
 				nextCircle->B = nextCircle->B + 100 % 255;
 			}

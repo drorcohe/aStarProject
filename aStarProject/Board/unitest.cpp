@@ -38,20 +38,22 @@ int mainNe(int argc, char** argv){
 }
 
 int main(){
-	testSuggestions();
-	std::string imPath = HEART_PARAMETER_SET.imagePath;
+
+	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\mapBoard.txt"),imPath);
+	b.init(std::string("..\\resources\\merlinBoardUpdated9.txt"),imPath);
 	
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 
-	
+		
 	BoardImprover boardImp(b);
-	
+	printNeigboursGUI(b);
+	fixColors(b);
+	//thresholdBoard(b,6,50,0,1000,0,1000);
 	//spaceImage(b);
-	//thresholdBoard(b,4,1000,0,10000,0,10000);
-	//boardImp.openGUI("..\\resources\\heartBoardUpdated.txt");
+	thresholdBoard(b,4,50,0,1000,0,1000);
+	boardImp.openGUI("..\\resources\\merlinBoardUpdated9.txt");
 	//printNeigboursGUI(b);
 	//boardImp.fixBoard();
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
