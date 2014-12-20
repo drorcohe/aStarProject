@@ -9,7 +9,7 @@
 #include "AStarSolver.h"
 bool testSuggestions();
 void printNeigboursGUI(Board & b);
-
+bool testDir(std::vector<int> solutionPath, std::vector<int> endCircles, std::vector<Direction> wantedDirections);
 
 void printNeigbours(std::vector<Circle*> circles, std::string imPath, Circle* chosenCircle);
 void printBoard(Board b, std::vector<int> solutionPath, int startCircle, std::vector<int> endCircles = std::vector<int>() );
@@ -38,7 +38,8 @@ int mainNe(int argc, char** argv){
 }
 
 int main(){
-
+	testSuggestions();
+	//testSuggestions();
 	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b;
 	b.init(std::string("..\\resources\\merlinBoardUpdated9.txt"),imPath);
@@ -96,8 +97,8 @@ int main(){
 	//cv::waitKey();
 	//printNeigboursGUI(b);
 	std::vector<int> endCircles = std::vector<int>();
-	endCircles.push_back(1004);
-	endCircles.push_back(9);
+	endCircles.push_back(49);
+	endCircles.push_back(36);
 
 	std::vector<Direction> directions = std::vector<Direction>();
 	directions.push_back(Direction::LEFT);
@@ -119,8 +120,9 @@ int main(){
 
 
 
-	solver.init(b,398,endCircles,directions);
+	solver.init(b,38,endCircles,directions);
 	std::vector<int> solutionPath = solver.solve();
+	bool a = testDir(solutionPath,endCircles,directions);
 	printBoard(b,solutionPath,1,endCircles); 
 	return -1;
 }
@@ -236,6 +238,35 @@ bool testSuggestions(){
 	b.destroy();
 
 	
+	imPath = MERLIN_PARAMETER_SET.imagePath;
+	b.init(std::string("..\\resources\\finalBoard\\merlinBoard.txt"),imPath);
+	endCircles = std::vector<int>();
+	endCircles.push_back(49);
+	endCircles.push_back(36);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::LEFT);
+	solver.init(b,38,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+
+
+	endCircles = std::vector<int>();
+	endCircles.push_back(1004);
+	endCircles.push_back(9);
+
+	directions = std::vector<Direction>();
+	directions.push_back(Direction::LEFT);
+	directions.push_back(Direction::LEFT);
+	solver.init(b,398,endCircles,directions);
+	solutionPath = solver.solve();
+	if(!testDir(solutionPath,endCircles,directions)){
+		exit(1);
+	}
+	b.destroy();
 
 	imPath = HEART_PARAMETER_SET.imagePath;
 	b.init(std::string("..\\resources\\finalBoard\\heartBoard.txt"),imPath);

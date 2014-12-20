@@ -181,10 +181,7 @@ std::vector<int> AStarSolver::aStarSearch(int start,int end, Direction direction
 		}
 		AStarNode currentCircleNode = findMinIndexFromOpenSet(openSet,f_score); //the node in openset having the lowest f_score[] value
 		Circle* currentCircle = board.indToCircle[currentCircleNode.circleIndex];
-		
-		if(currentCircleNode.circleIndex==455){
-			int b =2;
-		}
+	
 
 		openSet.erase(currentCircleNode);
 		closeSet.insert(currentCircleNode);
