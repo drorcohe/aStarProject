@@ -53,7 +53,7 @@ int main(){
 	//thresholdBoard(b,6,50,0,1000,0,1000);
 	//spaceImage(b);
 	thresholdBoard(b,4,50,0,1000,0,1000);
-	boardImp.openGUI("..\\resources\\merlinBoardUpdated9.txt");
+	//boardImp.openGUI("..\\resources\\merlinBoardUpdated9.txt");
 	//printNeigboursGUI(b);
 	//boardImp.fixBoard();
 	//writeBoardToFile(b.getCircles(),"..\\resources\\shoutBoardFixedLatest.txt");
@@ -94,10 +94,10 @@ int main(){
 
 	exit(1);*/
 	//cv::waitKey();
-	printNeigboursGUI(b);
+	//printNeigboursGUI(b);
 	std::vector<int> endCircles = std::vector<int>();
-	endCircles.push_back(49);
-	endCircles.push_back(36);
+	endCircles.push_back(1004);
+	endCircles.push_back(9);
 
 	std::vector<Direction> directions = std::vector<Direction>();
 	directions.push_back(Direction::LEFT);
@@ -119,7 +119,7 @@ int main(){
 
 
 
-	solver.init(b,38,endCircles,directions);
+	solver.init(b,398,endCircles,directions);
 	std::vector<int> solutionPath = solver.solve();
 	printBoard(b,solutionPath,1,endCircles); 
 	return -1;

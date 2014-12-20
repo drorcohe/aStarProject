@@ -41,6 +41,29 @@ std::vector<int> solutionPath = solver.solve();
 
 
 
+####merlin- 1####
+std::vector<int> endCircles = std::vector<int>();
+endCircles.push_back(49);
+endCircles.push_back(36);
+
+std::vector<Direction> directions = std::vector<Direction>();
+directions.push_back(Direction::LEFT);
+directions.push_back(Direction::LEFT);
+solver.init(b,38,endCircles,directions);
+
+#####merlin - 2####
+std::vector<int> endCircles = std::vector<int>();
+endCircles.push_back(1004);
+endCircles.push_back(9);
+
+std::vector<Direction> directions = std::vector<Direction>();
+directions.push_back(Direction::LEFT);
+directions.push_back(Direction::LEFT);
+solver.init(b,398,endCircles,directions);
+
+
+
+
 #####deer - 1####
 std::vector<int> endCircles = std::vector<int>();
 endCircles.push_back(191);
