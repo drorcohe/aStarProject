@@ -40,11 +40,21 @@ int mainNe(int argc, char** argv){
 }
 
 int main(){
-	//testSuggestions();
+	testSuggestions();
 	//testSuggestions();
 	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
-	Board b;
-	b.init(std::string("..\\resources\\finalBoard\\merlinBoardu.txt"),imPath);
+	Board b,b2,b3,b4;
+	b.init(std::string("..\\resources\\finalBoard\\merlinBoard.txt"),imPath);
+	b2.init(std::string("..\\resources\\finalBoard\\deerBoard.txt"),imPath);
+	b3.init(std::string("..\\resources\\finalBoard\\shoutBoard.txt"),imPath);
+	b4.init(std::string("..\\resources\\finalBoard\\heartBoard.txt"),imPath);
+	writeBoardToFile(b.getCircles(),b.width,b.height,b.recommendedPaths,"..\\resources\\finalBoard\\merlinBoardu.txt");
+	writeBoardToFile(b2.getCircles(),b2.width,b2.height,b2.recommendedPaths,"..\\resources\\finalBoard\\deerBoardu.txt");
+	writeBoardToFile(b3.getCircles(),b3.width,b3.height,b3.recommendedPaths,"..\\resources\\finalBoard\\shoutBoardu.txt");
+	writeBoardToFile(b4.getCircles(),b4.width,b4.height,b4.recommendedPaths,"..\\resources\\finalBoard\\heartBoardu.txt");
+	b2.destroy(); b3.destroy(); b4.destroy();
+
+
 
 	std::vector<int> endCircles2 = std::vector<int>();
 	endCircles2.push_back(49);
