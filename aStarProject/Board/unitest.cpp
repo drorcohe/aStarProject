@@ -9,6 +9,8 @@
 #include "AStarSolver.h"
 bool testSuggestions();
 void printNeigboursGUI(Board & b);
+
+bool testSuggestions(Board b, bool showSolution = false);
 bool testDir(std::vector<int> solutionPath, std::vector<int> endCircles, std::vector<Direction> wantedDirections);
 
 void printNeigbours(std::vector<Circle*> circles, std::string imPath, Circle* chosenCircle);
@@ -40,7 +42,7 @@ int mainNe(int argc, char** argv){
 }
 
 int main(){
-	testSuggestions();
+
 	//testSuggestions();
 	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b,b2,b3,b4;
@@ -48,6 +50,11 @@ int main(){
 	b2.init(std::string("..\\resources\\finalBoard\\deerBoard.txt"),imPath);
 	b3.init(std::string("..\\resources\\finalBoard\\shoutBoard.txt"),imPath);
 	b4.init(std::string("..\\resources\\finalBoard\\heartBoard.txt"),imPath);
+	testSuggestions(b,true);
+	testSuggestions(b2,true);
+	testSuggestions(b3,true);
+	testSuggestions(b4,true);
+	exit(1);
 	writeBoardToFile(b.getCircles(),b.width,b.height,b.recommendedPaths,"..\\resources\\finalBoard\\merlinBoardu.txt");
 	writeBoardToFile(b2.getCircles(),b2.width,b2.height,b2.recommendedPaths,"..\\resources\\finalBoard\\deerBoardu.txt");
 	writeBoardToFile(b3.getCircles(),b3.width,b3.height,b3.recommendedPaths,"..\\resources\\finalBoard\\shoutBoardu.txt");
@@ -174,7 +181,33 @@ bool testDir(std::vector<int> solutionPath, std::vector<int> endCircles, std::ve
 
 
 }
-bool testSuggestions(){
+
+
+
+
+bool testSuggestions(Board b, bool showSolution){
+	AStarSolver solver;
+	for(int i=0 ; i<b.recommendedPaths.size() ; i++){
+		PATH_DETAIL pd = b.recommendedPaths[i];
+		solver.init(b,pd.start,pd.endPoints,pd.directions);
+		std::vector<int> solutionPath = solver.solve();
+		if(!testDir(solutionPath,pd.endPoints,pd.directions)){
+			return false;
+		}
+		std::cout<<"\n\n\n*************************************\n\n\n";
+		if(showSolution){
+			printBoard(b,solutionPath,pd.start,pd.endPoints); 
+			cv::waitKey();
+		}
+	}
+
+
+	printf("PASSED!");
+	int a;
+	std::cin>>a;
+	return true;
+	/*
+
 	AStarSolver solver;
 	std::string imPath;
 	std::vector<int> endCircles, solutionPath;
@@ -327,7 +360,7 @@ bool testSuggestions(){
 	int a;
 	std::cin>>a;
 
-
+	*/
 
 }
 
