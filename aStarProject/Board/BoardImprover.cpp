@@ -194,7 +194,7 @@ void BoardImprover::openGUI(std::string newFileName){
 			}
 			if(newKey == 's'){
 				fixBoard();
-				writeBoardToFile(b.getCirclesRef(),newFileName);
+				writeBoardToFile(b.getCirclesRef(),b.width,b.height,b.recommendedPaths,newFileName);
 				std::cout<<"board was written to file\n";
 			}else if(newKey == 'h'){
 				HoleFillingEnlargeImages(b);

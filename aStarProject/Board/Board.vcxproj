@@ -71,6 +71,7 @@
     <ClInclude Include="BoardImprover.h" />
     <ClInclude Include="CircleExtractor.h" />
     <ClInclude Include="FileReader.h" />
+    <ClInclude Include="SharedTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AStarSolver.cpp" />

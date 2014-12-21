@@ -2,11 +2,9 @@
 #define _ASTAR_SOLVER
 #define DEBUG
 #include "Board.h"
+#include "SharedTypes.h"
 
 
-typedef enum Direction{
-	RIGHT, LEFT, NOT_IMPORTANT
-}Direction;
 
 
 typedef struct AStarNode{

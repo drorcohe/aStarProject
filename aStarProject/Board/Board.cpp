@@ -41,7 +41,8 @@ void Board::removeCircles(float minR, float maxR, int leftX, int rightX, int bot
 
 
 void Board::init(std::string boardPath,std::string imagePath, float maxDistFromNeighbour){
-	readBoardFromFile(boardPath,circles);
+
+	readBoardFromFile(boardPath,circles,width,height,recommendedPaths);
 	boardFileName = boardPath;
 	maxRadius = -1;
 	for(int i=0 ; i<circles.size() ; i++){
@@ -67,7 +68,7 @@ void Board::destroy(){
 	}
 	indToCircle = std::map<int,Circle*>();
 	circles = std::vector<Circle*>();
-
+	recommendedPaths = std::vector<PATH_DETAIL>();
 }
 
 std::vector<int> Board::getSolution(){

@@ -4,8 +4,17 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "SharedTypes.h"
 #include <map>
 #define EPSILON 0.00001
+
+
+
+typedef struct PATH_DETAIL{
+	int start;
+	std::vector<int> endPoints;
+	std::vector<Direction> directions;
+}PATH_DETAIL;
 
 
 class Circle{
@@ -40,7 +49,6 @@ public:
 
 	void removeCircles(float minR, float maxR=-1, int leftX=-1, int rightX=-1, int bottomY=-1, int topY=-1);
 
-
 	int getMaxRadius(){ return maxRadius; };
 	std::vector<int> getSolution();
 	std::string imageFilePath;
@@ -52,11 +60,13 @@ public:
 	std::string boardFileName;
 	std::map<int,Circle*> indToCircle;
 	float maxRadius;
+	int height, width;
+	std::vector<PATH_DETAIL> recommendedPaths;
+	
+
 
 private:
-	int height, width;
 	std::vector<Circle*> circles;
-	
 	
 	
 	

@@ -20,7 +20,7 @@ int mainWrite(int argc, char** argv){
 	std::vector<Circle*> circles = getCirclesFromImage(MAP_PARAMETER_SET);
 	printCircles(circles,MAP_PARAMETER_SET.imagePath);
 
-	writeBoardToFile(circles,std::string("..\\resources\\mapBoard.txt"));
+	writeBoardToFile(circles,0,0,std::vector<PATH_DETAIL>(), std::string("..\\resources\\mapBoard.txt"));
 	//printNeigbours(circles,MAP_PARAMETER_SET.imagePath);
 
 	return 1;
@@ -31,19 +31,33 @@ int mainNe(int argc, char** argv){
 	std::string imPath = "C:\\Users\\drorcohe\\aStarProject\\aStarProject\\resources\\shout.jpg";
 	int startCircle,  endCircle;
 	std::vector<Circle*> circles;
-	readBoardFromFile(std::string("..\\resources\\shoutBoardFixed4.txt"),circles);
+	int w,h;
+	std::vector<PATH_DETAIL> paths;
+	readBoardFromFile(std::string("..\\resources\\shoutBoardFixed4.txt"),circles,w,h,paths);
 	//printCircles(circles,imPath);
 	//printNeigbours(circles,imPath);
 	return 1;
 }
 
 int main(){
-	testSuggestions();
+	//testSuggestions();
 	//testSuggestions();
 	std::string imPath = MERLIN_PARAMETER_SET.imagePath;
 	Board b;
-	b.init(std::string("..\\resources\\merlinBoardUpdated9.txt"),imPath);
-	
+	b.init(std::string("..\\resources\\finalBoard\\merlinBoardu.txt"),imPath);
+
+	std::vector<int> endCircles2 = std::vector<int>();
+	endCircles2.push_back(49);
+	endCircles2.push_back(36);
+
+	std::vector<Direction> directions2 = std::vector<Direction>();
+	directions2.push_back(Direction::LEFT);
+	directions2.push_back(Direction::LEFT);
+
+	std::vector<PATH_DETAIL> p;
+	PATH_DETAIL pp; pp.start=1; pp.endPoints=endCircles2; pp.directions=directions2;
+	p.push_back(pp);
+	writeBoardToFile(b.getCircles(),b.width,b.height,b.recommendedPaths,"..\\resources\\finalBoard\\merlinBoardu.txt");
 	//b.removeCircles(3);
 //	HoleFillingAddCircles(b);
 

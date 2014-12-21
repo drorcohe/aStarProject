@@ -7,8 +7,9 @@
 #include <sstream>
 #define NEIGBOURS_HEADLINE "Neighbours"
 #define BOARD_START_END_HEADLINE "BoardStartEnd"
+#define RECOMMENDED_PATHS_HEADLINE "RecommendedStartEnd"
 
- void writeBoardToFile(std::vector<Circle*> circles, std::string fileName);
-void readBoardFromFile(std::string fileName,std::vector<Circle*>& circles);
+ void writeBoardToFile(std::vector<Circle*> circles, int w, int h, std::vector<PATH_DETAIL> paths,  std::string fileName);
+void readBoardFromFile(std::string fileName,std::vector<Circle*>& circles,int& w, int& h, std::vector<PATH_DETAIL>& paths);
 
 #endif
