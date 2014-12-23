@@ -49,15 +49,20 @@ int main(){
 	
 	b.init(std::string("..\\resources\\finalBoard\\merlinBoard.txt"),imPath);
 	BoardImprover boardImp1(b);
-	//boardImp1.openGUI("..\\resources\\aaa.txt");
+	boardImp1.openGUI("..\\resources\\finalBoard\\merlinBoard2.txt");
 
 	b2.init(std::string("..\\resources\\finalBoard\\deerBoard.txt"),imPath);
 	BoardImprover boardImp2(b2);
+	
 	//boardImp2.openGUI("..\\resources\\aaa.txt");
 
-	b3.init(std::string("..\\resources\\finalBoard\\shoutBoard.txt"),imPath);
-	//printNeigboursGUI(b3);
+	b3.init(std::string("..\\resources\\finalBoard\\shoutBoard2.txt"),imPath);
 	BoardImprover boardImp3(b3);
+	//boardImp3.openGUI("..\\resources\\finalBoard\\shoutBoard2.txt");
+	//printNeigboursGUI(b3);
+
+	//printNeigboursGUI(b3);
+	//BoardImprover boardImp3(b3);
 	//boardImp3.openGUI("..\\resources\\aaa.txt");
 
 	b4.init(std::string("..\\resources\\finalBoard\\heartBoard.txt"),imPath);
