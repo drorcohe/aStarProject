@@ -118,6 +118,7 @@ static void onMouse( int event, int x, int y, int, void* )
 		}
 	}else{
 		Circle* closestCircle = findClosestCircle(*gCircles,x,y);
+		std::cout<<"chosen circle: "<< closestCircle->index << std::endl;
 		if(latestPressedKey=='i'|| latestPressedKey=='j'){
 			int addition = latestPressedKey=='i'? 1:-1;
 			std::set<Circle*> ignoreSet = std::set<Circle*>();

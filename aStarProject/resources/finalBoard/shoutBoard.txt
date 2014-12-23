@@ -1049,12 +1049,9 @@ Neighbours
 522 :  2 20 29
 523 :  373 388 426
 RecommendedStartEnd
-s 1
-e  4 33
-d l r
-s 10
-e  2 247
-d l r
-s 442
-e  356 15
-d l r
+s 15
+e  260
+d r
+s 356
+e  260
+d r

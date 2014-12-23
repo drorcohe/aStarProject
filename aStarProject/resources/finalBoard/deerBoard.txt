@@ -619,9 +619,15 @@ Neighbours
 307 :  112 242 287
 308 :  226 228 282
 RecommendedStartEnd
-s 18
-e  191 2
-d r l
-s 118
-e  303 2
-d r l
+s 303
+e  6 2
+d r r
+s 67
+e  6 2
+d r r
+s 5
+e  6 2
+d r r
+s 5
+e  6
+d r

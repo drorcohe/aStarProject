@@ -2433,9 +2433,9 @@ Neighbours
 1214 :  333 366 1065 1213
 1215 :  40 200 325
 RecommendedStartEnd
-s 38
-e  49 36
-d l l
 s 398
-e  1004 9
-d l l
+e  735 978
+d r r
+s 262
+e  735 978
+d r r
